@@ -2,13 +2,12 @@
 # Radio class to manage interfacing with the NRF24 module
 # =========================================================
 
+# ================================================
 # Imports
-import sys
+# ================================================
+import sys, struct, time
 import pigpio
 from   nrf24  import *
-
-import struct #?
-import time
 
 class Radio:
 
@@ -44,11 +43,9 @@ class Radio:
     # Open connection
     self.radio.open_reading_pipe(RF24_RX_ADDR.P1, self.ADDRESS)
 
-    # Temp:
+    # Temp/debug
     self.radio.show_registers()
 
-
-    # Enter a loop receiving data on the address specified.
     try:
       print(f'Receive from {self.ADDRESS}')
 
@@ -65,6 +62,7 @@ class Radio:
 
           # Sleep 100 ms.
           time.sleep(0.1)
+
     except:
       print("[ERROR] Exception thrown in Rx loop") # TODO: Make error verbose
       self.radio.power_down()
@@ -81,7 +79,7 @@ class Radio:
 
     # TODO: This is the exisiting payload structure from the demo program.
     #       Need to work out a datastructure to maintain these.
-    if len(payload) == 9 and payload[0] == 0x01:
+    if len(payload) == 9 and protocol == 0x01:
       # Unpack the binary data:
       #   < - Little endian
       #   B - unsigned char
