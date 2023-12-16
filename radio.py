@@ -37,9 +37,12 @@ class Radio:
     self.radio.set_address_bytes(len(self.ADDRESS))
 
 
+  # ==================================================
+  # listen - Loop to listen for packets from the Tx
+  # ==================================================
   def listen(self):
     # Open connection
-    self.radio.open_reading_pipe(RF24_RX_ADDR.P1, self.address)
+    self.radio.open_reading_pipe(RF24_RX_ADDR.P1, self.ADDRESS)
 
     # Temp:
     self.radio.show_registers()
@@ -51,28 +54,37 @@ class Radio:
 
       while True:
 
-          # As long as data is ready for processing, process it.
+          # Go through each message that is available to parse
           while self.radio.data_ready():
-              # Read pipe and payload for message.
-              pipe    = self.radio.data_pipe()
-              payload = self.radio.get_payload()
+            pipe    = self.radio.data_pipe()    # Pipe is useful if we need to differentiate senders (up to 5)
+            payload = self.radio.get_payload()
 
-              # Resolve protocol number.
-              protocol = payload[0] if len(payload) > 0 else -1
-
-              hex = ':'.join(f'{i:02x}' for i in payload)
-
-              # Show message received as hex.
-              print(f" pipe: {pipe}, len: {len(payload)}, bytes: {hex}")
-
-              # If the length of the message is 9 bytes and the first byte is 0x01, then we try to interpret the bytes
-              # sent as an example message holding a temperature and humidity sent from the "simple-sender.py" program.
-              if len(payload) == 9 and payload[0] == 0x01:
-                  values = struct.unpack("<Bff", payload)
-                  print(f'Protocol: {values[0]}, temperature: {values[1]}, humidity: {values[2]}')
+            # Only process the data if it properly exists
+            if (len(payload) > 0):
+              self.parseData(payload)
 
           # Sleep 100 ms.
           time.sleep(0.1)
     except:
+      print("[ERROR] Exception thrown in Rx loop") # TODO: Make error verbose
       self.radio.power_down()
       self.gpio.stop()
+
+
+  # ==================================================
+  # parseData - Parse a given packet and match it to
+  #             a protocol.
+  # ==================================================
+  def parseData(self, payload):
+
+    protocol = payload[0]
+
+    # TODO: This is the exisiting payload structure from the demo program.
+    #       Need to work out a datastructure to maintain these.
+    if len(payload) == 9 and payload[0] == 0x01:
+      # Unpack the binary data:
+      #   < - Little endian
+      #   B - unsigned char
+      #   f - float (x2)
+      values = struct.unpack("<Bff", payload)
+      print(f'Protocol: {values[0]}, temperature: {values[1]}, humidity: {values[2]}')
