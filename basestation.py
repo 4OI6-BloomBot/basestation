@@ -3,10 +3,17 @@
 # =======================
 
 # Imports
-from radio import Radio
+import threading
+from   radio import Radio
+
+# =============
+# Global vars:
+#==============
+packet_queue = []
+
 
 # Create a radio object and start a loop to listen for data
-rx = Radio()
+rx = Radio(packet_queue)
 
 # TODO: Should be in a separate thread and push results to a queue
 #       A second thread can then pull from the queue to send data

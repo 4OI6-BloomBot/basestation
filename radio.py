@@ -14,9 +14,10 @@ class Radio:
   # ================================================
   # Constructor
   # ================================================
-  def __init__(self, gpio_port = 8888):
-    self.ADDRESS   = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
-    self.GPIO_PORT = gpio_port
+  def __init__(self, packet_queue, gpio_port = 8888):
+    self.ADDRESS      = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
+    self.GPIO_PORT    = gpio_port
+    self.PACKET_QUEUE = packet_queue
 
     # Attempt to connect to the Pi GPIO daemon
     self.gpio = pigpio.pi("localhost", self.GPIO_PORT)
@@ -58,7 +59,8 @@ class Radio:
 
             # Only process the data if it properly exists
             if (len(payload) > 0):
-              self.parseData(payload)
+              self.PACKET_QUEUE.append(payload)
+              # self.parseData(payload)
 
           # Sleep 100 ms.
           time.sleep(0.1)
