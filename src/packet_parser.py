@@ -7,7 +7,7 @@
 # Imports
 # ==============
 import struct
-from   protocols import PROTOCOLS, getTypeStr
+from   src.protocols import PROTOCOLS, getTypeStr
 
 
 class PacketParser:

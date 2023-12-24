@@ -4,8 +4,8 @@
 
 # Imports
 import threading
-from   radio         import Radio
-from   packet_parser import PacketParser
+from   src.radio         import Radio
+from   src.packet_parser import PacketParser
 
 # ==================================================
 # Global vars:
