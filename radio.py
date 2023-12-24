@@ -5,7 +5,7 @@
 # ================================================
 # Imports
 # ================================================
-import sys, struct, time
+import sys, time
 import pigpio
 from   nrf24  import *
 
@@ -69,22 +69,3 @@ class Radio:
       print("[ERROR] Exception thrown in Rx loop") # TODO: Make error verbose
       self.radio.power_down()
       self.gpio.stop()
-
-
-  # ==================================================
-  # parseData - Parse a given packet and match it to
-  #             a protocol.
-  # ==================================================
-  def parseData(self, payload):
-
-    protocol = payload[0]
-
-    # TODO: This is the exisiting payload structure from the demo program.
-    #       Need to work out a datastructure to maintain these.
-    if len(payload) == 9 and protocol == 0x01:
-      # Unpack the binary data:
-      #   < - Little endian
-      #   B - unsigned char
-      #   f - float (x2)
-      values = struct.unpack("<Bff", payload)
-      print(f'Protocol: {values[0]}, temperature: {values[1]}, humidity: {values[2]}')
