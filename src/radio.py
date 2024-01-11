@@ -74,50 +74,50 @@ class Radio:
       self.radio.power_down()
       self.gpio.stop()
 
-def send(self):
-  self.radio.open_writing_pipe(self.TX_ADDRESS)
+  def send(self):
+    self.radio.open_writing_pipe(self.TX_ADDRESS)
 
-  # Display the content of NRF24L01 device registers.
-  self.radio.show_registers()
+    # Display the content of NRF24L01 device registers.
+    self.radio.show_registers()
 
-  count = 0
-  print(f'Send to {self.TX_ADDRESS}')
-  try:
-      while True:
+    count = 0
+    print(f'Send to {self.TX_ADDRESS}')
+    try:
+        while True:
 
-          # Emulate that we read temperature and humidity from a sensor, for example
-          # a DHT22 sensor.  Add a little random variation so we can see that values
-          # sent/received fluctuate a bit.
-          temperature = normalvariate(23.0, 0.5)
-          humidity = normalvariate(62.0, 0.5)
-          print(f'Sensor values: temperature={temperature}, humidity={humidity}')
+            # Emulate that we read temperature and humidity from a sensor, for example
+            # a DHT22 sensor.  Add a little random variation so we can see that values
+            # sent/received fluctuate a bit.
+            temperature = normalvariate(23.0, 0.5)
+            humidity = normalvariate(62.0, 0.5)
+            print(f'Sensor values: temperature={temperature}, humidity={humidity}')
 
-          # Pack temperature and humidity into a byte buffer (payload) using a protocol 
-          # signature of 0x01 so that the receiver knows that the bytes we are sending 
-          # are a temperature and a humidity (see "simple-receiver.py").
-          payload = struct.pack("<Bff", 0x01, temperature, humidity)
+            # Pack temperature and humidity into a byte buffer (payload) using a protocol 
+            # signature of 0x01 so that the receiver knows that the bytes we are sending 
+            # are a temperature and a humidity (see "simple-receiver.py").
+            payload = struct.pack("<Bff", 0x01, temperature, humidity)
 
-          # Send the payload to the address specified above.
-          self.radio.reset_packages_lost()
-          self.radio.send(payload)
-          try:
-              self.radio.wait_until_sent()
-              
-          except TimeoutError:
-              print("Timeout waiting for transmission to complete.")
-              time.sleep(10)
-              continue
-          
-          if self.radio.get_packages_lost() == 0:
-              print(f"Success: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
-          else:
-              print(f"Error: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+            # Send the payload to the address specified above.
+            self.radio.reset_packages_lost()
+            self.radio.send(payload)
+            try:
+                self.radio.wait_until_sent()
+                
+            except TimeoutError:
+                print("Timeout waiting for transmission to complete.")
+                time.sleep(10)
+                continue
+            
+            if self.radio.get_packages_lost() == 0:
+                print(f"Success: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+            else:
+                print(f"Error: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
 
-          # Wait 10 seconds before sending the next reading.
-          time.sleep(10)
+            # Wait 10 seconds before sending the next reading.
+            time.sleep(10)
 
-  except:
-      print("[ERROR] Exception thrown in Tx loop") # TODO: Make error verbose
-      self.radio.power_down()
-      self.gpio.stop()
+    except:
+        print("[ERROR] Exception thrown in Tx loop") # TODO: Make error verbose
+        self.radio.power_down()
+        self.gpio.stop()
 
