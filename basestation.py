@@ -20,15 +20,17 @@ data_queue   = []
 
 
 # Create a radio object and start a loop to listen for data
-rx     = Radio(packet_queue)
+radio     = Radio(packet_queue)
 parser = PacketParser(packet_queue, data_queue)
 
 
 # TODO: Should be in a separate thread and push results to a queue
 #       A second thread can then pull from the queue to send data
 #       to the server.
-rxThread = threading.Thread(target=rx.listen)
-parserThread = threading.Thread(target=parser.monitorRxQueue)
-rxThread.start()
-parserThread.start()
+# rxThread = threading.Thread(target=radio.listen)
+# parserThread = threading.Thread(target=parser.monitorRxQueue)
+txThread = threading.Thread(target=radio.send)
+# rxThread.start()
+# parserThread.start()
+txThread.start()
 
