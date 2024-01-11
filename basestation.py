@@ -27,6 +27,8 @@ parser = PacketParser(packet_queue, data_queue)
 # TODO: Should be in a separate thread and push results to a queue
 #       A second thread can then pull from the queue to send data
 #       to the server.
-rx.listen()
-
+rxThread = threading.Thread(target=rx.listen)
+parserThread = threading.Thread(target=parser.monitorRxQueue)
+rxThread.start()
+parserThread.start()
 

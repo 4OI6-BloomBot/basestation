@@ -52,7 +52,7 @@ class PacketParser:
 
     # Construct the string for the unpack function
     unpack_str = "<B"
-    for data in protocol.data:
+    for data in protocol["data"]:
       unpack_str += getTypeStr(data["type"])
 
     # Unpack the binary data:
@@ -64,7 +64,7 @@ class PacketParser:
 
     # Store the parsed values back into the protocol struct
     for i in range(1, len(values)):
-      protocol.data[i - 1]["value"] = values[i]
+      protocol["data"][i - 1]["value"] = values[i]
 
     return protocol
     
