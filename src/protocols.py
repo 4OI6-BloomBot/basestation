@@ -14,20 +14,20 @@
 PROTOCOLS = {}
 
 # Location Protocol
-PROTOCOLS[1] = {
-                "name" : "location",
-                "id"   : 1,
-                "data" : [
-                  {
-                    "name" : "latitude",
-                    "type" : float,
-                  },
-                  {
-                    "name" : "longitude",
-                    "type" : float
-                  }
-                ]
-              }
+PROTOCOLS[1] =  {
+                  "name" : "location",
+                  "id"   : 1,
+                  "data" : [
+                    {
+                      "name" : "latitude",
+                      "type" : float,
+                    },
+                    {
+                      "name" : "longitude",
+                      "type" : float
+                    }
+                  ]
+                }
 
 # TODO: Needs an endpoint field for the API
 
