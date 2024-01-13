@@ -5,10 +5,10 @@
 # ============================
 # Imports
 # ============================
-from base import Protocol
+from base import BaseProtocol
 
 
-class Location(Protocol):
+class Location(BaseProtocol):
 
   # =============================================
   # Declare the data structure for the protocol
