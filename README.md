@@ -16,3 +16,9 @@ python -m pip install -r requirements.txt
 
 ## Changes
 The main branch is protected from direct writes, ideally create a new branch to work in then merge it in with a pull request when ready.
+
+If new packages are required, updated the requirements.txt file using pipreqs:
+
+```python
+pipreqs > requirements.txt --force
+```
