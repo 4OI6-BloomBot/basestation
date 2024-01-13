@@ -1,23 +1,19 @@
-# 
-# Define the protocols
-# 
+# ================================
+# Base protocol definition
+# ================================
 
-# ======================
-# Data structure:
-# ======================
-# (Key is tied to the protocol id)
-# name: Name of datatype
-# id:   Protocol ID number
-# data: List of all data sections of the packet
-#     name: Name of data
-#     type: Datatype
+# ================================
+# Imports
+# ================================
 from abc import ABCMeta, abstractmethod
 
+# =============================================
+# Declare protocol types in a dictionary with
+# the key as their IDs
+# =============================================
+PROTOCOLS = {}
 
-# =============================================
-# Protocol base class.
-# TODO: Needs an endpoint field for the API
-# =============================================
+
 class Protocol(metaclass=ABCMeta):
   
   # =============================================
@@ -87,39 +83,6 @@ class Protocol(metaclass=ABCMeta):
         json[key] = self.data[key]["value"]
 
     return json
-
-
-# =============================================
-# Location protocol class
-# =============================================
-class Location(Protocol):
-
-  # =============================================
-  # Declare the data structure for the protocol
-  # =============================================
-  data = {
-    "latitude" : {
-      "type" : float
-    },
-    "longitude" : {
-      "type" : float
-    }
-  }
-
-  # =============================================
-  # Constructor
-  # ============================================= 
-  def __init__(self):
-    super().__init__(1)
-
-
-# =============================================
-# Declare protocol types in a dictionary with
-# the key as their IDs
-# =============================================
-PROTOCOLS = {
-  1 : Location
-} 
 
 
 # Helper fn
