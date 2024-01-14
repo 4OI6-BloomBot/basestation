@@ -6,7 +6,7 @@
 # ==============
 # Imports
 # ==============
-
+import requests
 
 class ServerMiddleware():
 
@@ -32,4 +32,25 @@ class ServerMiddleware():
   # sendData - Send the given packet to the server
   # ==================================================
   def sendData(self, data):
+    json = self.createJSON(data)
     print("TODO: Send data to server.")
+
+
+  # ==================================================
+  # createJSON - Convert the datapacket to JSON that
+  #              can be interpreted by the API
+  # ==================================================
+  def createJSON(self, pkt):
+    json = {}
+    
+    # TODO: Need to pull the device information from the HW
+    #       Packet parser needs to be updated to account for this.
+    json["device"] = {
+      "hwID" : "123"
+    }
+
+    # Unpack the individual values into the JSON object
+    for val in pkt["data"]:
+      json[val["name"]] = val["value"]
+
+    return json

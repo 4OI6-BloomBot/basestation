@@ -7,7 +7,7 @@
 # Imports
 # ==============
 import struct
-from   src.protocols import PROTOCOLS, getTypeStr
+from   protocols.base import PROTOCOLS
 
 
 class PacketParser:
@@ -45,26 +45,27 @@ class PacketParser:
 
     # Find the protocol in the map
     if (protocol_id in PROTOCOLS):
-      protocol = PROTOCOLS[protocol_id]
+      protocol = PROTOCOLS[protocol_id]()
     else:
       print("[ERROR] Could not find protocol") # TODO: Make more verbose
 
 
-    # Construct the string for the unpack function
-    unpack_str = "<B"
-    for data in protocol["data"]:
-      unpack_str += getTypeStr(data["type"])
-
-    # Unpack the binary data:
-    #   < - Little endian
-    #   B - unsigned char
-    #   f - float (x2)
-    values = struct.unpack(unpack_str, packet)
+    values = struct.unpack(protocol.getUnpackStr(), packet)
     print(f'Protocol: {values[0]}, temperature: {values[1]}, humidity: {values[2]}')
 
+
+    # Check if the number of values matches what is expected for the datatype
+    if (len(protocol.data.keys()) != len(values) - 1):
+      raise ValueError("Mismatch between the number of values in the protocol ({keys}) and packet ({pkt})".format(
+                        keys = len(protocol.data.keys()), 
+                        pkt  = len(values) - 1
+                      ))
+
+
     # Store the parsed values back into the protocol struct
-    for i in range(1, len(values)):
-      protocol["data"][i - 1]["value"] = values[i]
+    for i, key in enumerate(protocol.data.keys()):
+      protocol.setValue(key, values[i + 1])
+
 
     return protocol
     
