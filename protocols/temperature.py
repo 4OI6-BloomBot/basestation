@@ -12,7 +12,8 @@ from .base        import PROTOCOLS
 class Temperature(Measurement):
 
   data = {
-    "type" : float
+    "type"      : float,
+    "precision" : 6
   }
 
   name = "Temperature"
