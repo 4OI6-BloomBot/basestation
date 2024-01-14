@@ -40,6 +40,11 @@ class BaseProtocol(metaclass = ABCMeta):
   def endpoint(self):
     pass
 
+  @property
+  @abstractmethod
+  def name(self):
+    pass
+
 
   # =============================================
   # Check that the data name/key exists in the 

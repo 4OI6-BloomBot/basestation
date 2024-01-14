@@ -23,6 +23,7 @@ class Location(BaseProtocol):
   }
 
   endpoint = "location"
+  name     = "Location"
 
 
   # =============================================
