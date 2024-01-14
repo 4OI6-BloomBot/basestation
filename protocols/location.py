@@ -5,7 +5,7 @@
 # ============================
 # Imports
 # ============================
-from base import BaseProtocol
+from base import BaseProtocol, PROTOCOLS
 
 
 class Location(BaseProtocol):
@@ -27,3 +27,10 @@ class Location(BaseProtocol):
   # ============================================= 
   def __init__(self):
     super().__init__(1)
+
+
+# =============================================
+# Add Location to protocol type dictionary
+# TODO: Cleaner way to do this?
+# =============================================
+PROTOCOLS[1] = Location

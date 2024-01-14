@@ -22,13 +22,6 @@ class BaseProtocol(metaclass = ABCMeta):
   def __init__(self, id):
     self.id = id
 
-    # Add type to protocol dict
-    if (self.id in PROTOCOLS):
-      ValueError("Protocol with id={id} already exists.".format(id = self.id))
-    
-    PROTOCOLS[self.id] = type(self)
-
-
     # Set defaults to None
     self.hwID = None
 
