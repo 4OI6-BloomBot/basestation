@@ -92,6 +92,23 @@ class BaseProtocol(metaclass = ABCMeta):
     return json
 
 
-# Helper fn
+  # ==================================================
+  # Construct the string for the unpack function
+  # ==================================================
+  def getUnpackStr(self):
+    # < - Little endian
+    # B - Unsigned char (ID)
+    unpack_str = "<B"
+
+    for key in self.data:
+      unpack_str += getTypeStr(self.data[key]["type"])
+
+    return unpack_str
+
+
+# ==================================================
+# Helper function to generate the chars associated
+# with the type
+# ==================================================
 def getTypeStr(t):
   if (t == float): return "f"
