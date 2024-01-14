@@ -22,6 +22,8 @@ class Location(BaseProtocol):
     }
   }
 
+  endpoint = "location"
+
   # =============================================
   # Constructor
   # ============================================= 

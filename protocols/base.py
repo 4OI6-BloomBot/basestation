@@ -27,11 +27,17 @@ class BaseProtocol(metaclass = ABCMeta):
 
 
   # =============================================
-  # Each child needs to declare the data object
+  # Each child needs to declare the following
+  # properties
   # =============================================
   @property
   @abstractmethod
   def data(self):
+    pass
+
+  @property
+  @abstractmethod
+  def endpoint(self):
     pass
 
 
