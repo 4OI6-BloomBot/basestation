@@ -6,11 +6,11 @@
 # ==============
 # Imports
 # ==============
-import requests
+import requests, os
 
 class ServerMiddleware():
 
-  API_ADDR = "http://192.168.1.108:8080/api/"
+  API_ADDR = os.getenv("API_ADDR")
 
   # ================================================== 
   # Constructor - Requires a shared queue that is 
