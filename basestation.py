@@ -2,11 +2,17 @@
 # Entry to basestation
 # =======================
 
+# =======================
 # Imports
+# =======================
 import threading
 from   src.radio             import Radio
 from   src.packet_parser     import PacketParser
 from   src.server_middleware import ServerMiddleware
+
+# Import the individual protocols
+from protocols import Location
+
 
 # ==================================================
 # Global vars:

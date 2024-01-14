@@ -5,7 +5,7 @@
 # ============================
 # Imports
 # ============================
-from base import BaseProtocol, PROTOCOLS
+from .base import BaseProtocol, PROTOCOLS
 
 
 class Location(BaseProtocol):
