@@ -15,10 +15,12 @@ class Location(BaseProtocol):
   # =============================================
   data = {
     "latitude" : {
-      "type" : float
+      "type"      : float,
+      "precision" : 6
     },
     "longitude" : {
-      "type" : float
+      "type"      : float,
+      "precision" : 6
     }
   }
 

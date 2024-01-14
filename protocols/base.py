@@ -5,7 +5,8 @@
 # ================================
 # Imports
 # ================================
-from abc import ABCMeta, abstractmethod
+import math
+from   abc import ABCMeta, abstractmethod
 
 # =============================================
 # Declare protocol types in a dictionary with
@@ -84,12 +85,21 @@ class BaseProtocol(metaclass = ABCMeta):
       "hwID" : self.hwID
     }
 
+
+    # Apply the set precision to the data
+    self.applyPrecision()
+
     # Update the data in the JSON field accordingly
     self.packJSONData(json)
+  
 
     return json
   
   
+  # ==================================================
+  # Method implemented by children to handle adding their
+  # data to the JSON obj
+  # ==================================================
   @abstractmethod
   def packJSONData(self, json):
     pass
@@ -107,6 +117,24 @@ class BaseProtocol(metaclass = ABCMeta):
       unpack_str += getTypeStr(self.data[key]["type"])
 
     return unpack_str
+
+
+  # ==================================================
+  # If the value and precision keys are set, apply
+  # the rounding to the value
+  # ==================================================
+  def applyPrecision(self):
+    for key in self.data:
+      if (self.data[key].keys() >= {"precision", "value"}):
+          
+          # Python's round function only accounts for the number of decimal points. The server needs a consistent total number
+          # of digits. Therefore subtract the int portion from the precision to get the number of digits we need to round.
+          # TODO: This would affect the precision of some values. Can likely ignore since our equip is not sensitive
+          #       enough for 10^-6/5 or what have you
+          rounding_digits = self.data[key]["precision"] - int(math.ceil(math.log10(abs(self.data[key]["value"]))))
+          
+          self.data[key]["value"] = round(self.data[key]["value"], rounding_digits)
+
 
 
 # ==================================================
