@@ -10,6 +10,8 @@ import requests
 
 class ServerMiddleware():
 
+  API_ADDR = "http://192.168.1.108:8080/api/"
+
   # ================================================== 
   # Constructor - Requires a shared queue that is 
   #               populated with parsed packets
@@ -31,26 +33,23 @@ class ServerMiddleware():
   # ==================================================
   # sendData - Send the given packet to the server
   # ==================================================
-  def sendData(self, data):
-    json = self.createJSON(data)
-    print("TODO: Send data to server.")
+  def sendData(self, protocol):
 
+    # TODO: Need to parse hwID from packet.
+    protocol.hwID = 123
 
-  # ==================================================
-  # createJSON - Convert the datapacket to JSON that
-  #              can be interpreted by the API
-  # ==================================================
-  def createJSON(self, pkt):
-    json = {}
+    json = protocol.toJSON()
     
-    # TODO: Need to pull the device information from the HW
-    #       Packet parser needs to be updated to account for this.
-    json["device"] = {
-      "hwID" : "123"
-    }
+    # Construct POST data
+    headers = {'Content-Type': 'application/json'}
+    url     = ServerMiddleware.API_ADDR + protocol.endpoint
+    
+    # Need to ensure that there is a trailing / in the URL
+    if (url[len(url) - 1] != '/'):
+      url += "/"
 
-    # Unpack the individual values into the JSON object
-    for val in pkt["data"]:
-      json[val["name"]] = val["value"]
-
-    return json
+    # Send POST request
+    response = requests.post(url, json = json, headers = headers)
+    
+    # TODO: Handle response
+    print(response)
