@@ -11,7 +11,7 @@ from   src.packet_parser     import PacketParser
 from   src.server_middleware import ServerMiddleware
 
 # Import the individual protocols
-from protocols import Location
+from protocols.location import Location
 
 
 # ==================================================

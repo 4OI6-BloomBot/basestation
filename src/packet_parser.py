@@ -63,7 +63,7 @@ class PacketParser:
 
 
     # Store the parsed values back into the protocol struct
-    for key, i in enumerate(protocol.data.keys()):
+    for i, key in enumerate(protocol.data.keys()):
       protocol.setValue(key, values[i + 1])
 
 
