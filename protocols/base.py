@@ -79,16 +79,15 @@ class BaseProtocol(metaclass = ABCMeta):
       "hwID" : self.hwID
     }
 
-
-    # Unpack the individual values into the JSON object
-    # Check that the value has been set before parsing
-    for key in self.data:
-      if ("value" not in self.data[key]):
-        raise ValueError("Value not provided for {name}".format(name = key))
-      else:
-        json[key] = self.data[key]["value"]
+    # Update the data in the JSON field accordingly
+    self.packJSONData(json)
 
     return json
+  
+  
+  @abstractmethod
+  def packJSONData(self, json):
+    pass
 
 
   # ==================================================

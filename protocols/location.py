@@ -24,11 +24,26 @@ class Location(BaseProtocol):
 
   endpoint = "location"
 
+
   # =============================================
   # Constructor
   # ============================================= 
   def __init__(self):
     super().__init__(1)
+
+
+  # =============================================
+  # Unpack the individual values into the JSON 
+  # object. Check that the value has been set
+  # before parsing
+  # =============================================
+  def packJSONData(self, json):
+    for key in self.data:
+      if ("value" not in self.data[key]):
+        raise ValueError("Value not provided for {name}".format(name = key))
+      else:
+        json[key] = self.data[key]["value"]
+
 
 
 # =============================================
