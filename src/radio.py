@@ -5,10 +5,10 @@
 # ================================================
 # Imports
 # ================================================
-from random import normalvariate
 import struct
 import sys, time
 import pigpio
+from   random import normalvariate
 from   nrf24  import *
 
 class Radio:
@@ -17,8 +17,8 @@ class Radio:
   # Constructor
   # ================================================
   def __init__(self, packet_queue, gpio_port = 8888):
-    self.RX_ADDRESS      = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
-    self.TX_ADDRESS      = "2SNSR"    
+    self.RX_ADDRESS   = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
+    self.TX_ADDRESS   = "2SNSR"    
     self.GPIO_PORT    = gpio_port
     self.PACKET_QUEUE = packet_queue
 
@@ -89,7 +89,7 @@ class Radio:
             # a DHT22 sensor.  Add a little random variation so we can see that values
             # sent/received fluctuate a bit.
             temperature = normalvariate(23.0, 0.5)
-            humidity = normalvariate(62.0, 0.5)
+            humidity    = normalvariate(62.0, 0.5)
             print(f'Sensor values: temperature={temperature}, humidity={humidity}')
 
             # Pack temperature and humidity into a byte buffer (payload) using a protocol 

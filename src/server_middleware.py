@@ -6,9 +6,11 @@
 # ==============
 # Imports
 # ==============
-
+import requests, os
 
 class ServerMiddleware():
+
+  API_ADDR = os.getenv("API_ADDR")
 
   # ================================================== 
   # Constructor - Requires a shared queue that is 
@@ -31,5 +33,23 @@ class ServerMiddleware():
   # ==================================================
   # sendData - Send the given packet to the server
   # ==================================================
-  def sendData(self, data):
-    print("TODO: Send data to server.")
+  def sendData(self, protocol):
+
+    # TODO: Need to parse hwID from packet.
+    protocol.hwID = 123
+
+    json = protocol.toJSON()
+    
+    # Construct POST data
+    headers = {'Content-Type': 'application/json'}
+    url     = ServerMiddleware.API_ADDR + protocol.endpoint
+    
+    # Need to ensure that there is a trailing / in the URL
+    if (url[len(url) - 1] != '/'):
+      url += "/"
+
+    # Send POST request
+    response = requests.post(url, json = json, headers = headers)
+    
+    # TODO: Handle response
+    print(response)

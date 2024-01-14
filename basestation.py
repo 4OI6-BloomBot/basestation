@@ -2,10 +2,27 @@
 # Entry to basestation
 # =======================
 
+# =======================
 # Imports
+# =======================
 import threading
-from   src.radio         import Radio
-from   src.packet_parser import PacketParser
+from   dotenv import load_dotenv
+
+# ==================================================
+# Load the environment variables from the .env file
+# Needs to be done prior to loading other source
+# files due to their potential dependance on vars
+# ==================================================
+load_dotenv()
+
+# Load other source files
+from   src.radio             import Radio
+from   src.packet_parser     import PacketParser
+from   src.server_middleware import ServerMiddleware
+
+# Import the individual protocols
+from protocols.location import Location
+
 
 # ==================================================
 # Global vars:
@@ -18,19 +35,23 @@ from   src.packet_parser import PacketParser
 packet_queue = [] 
 data_queue   = []
 
-
-# Create a radio object and start a loop to listen for data
-radio     = Radio(packet_queue)
+# Create the classes and pass them their respective queues
+radio  = Radio(packet_queue)
 parser = PacketParser(packet_queue, data_queue)
+server = ServerMiddleware(data_queue)
 
 
-# TODO: Should be in a separate thread and push results to a queue
-#       A second thread can then pull from the queue to send data
-#       to the server.
-rxThread = threading.Thread(target=radio.listen)
+# ==============================
+# Create and start threads
+# ==============================
+rxThread     = threading.Thread(target=radio.listen)
+txThread     = threading.Thread(target=radio.send)
 parserThread = threading.Thread(target=parser.monitorRxQueue)
-txThread = threading.Thread(target=radio.send)
+serverThread = threading.Thread(target=server.monitorServerQueue)
+
 rxThread.start()
 parserThread.start()
+serverThread.start()
 txThread.start()
 
+# TODO: Add way to gracefully stop
