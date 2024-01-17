@@ -36,33 +36,37 @@ class PacketParser:
 
 
   # ==================================================
-  # parseData - Parse a given packet and match it to
-  #             a protocol.
+  # parsePacket - Parse a given packet and match it to
+  #               a protocol.
   # ==================================================
   def parsePacket(self, packet):
 
-    protocol_id = packet[0]
-
     # Find the protocol in the map
-    if (protocol_id in PROTOCOLS):
-      protocol = PROTOCOLS[protocol_id]()
-    else:
+    protocol_id = packet[0]
+    if (protocol_id not in PROTOCOLS):
       raise ValueError("[ERROR] Could not find protocol with id={id}".format(id = protocol_id))
+      
 
+    # Create a new instance of the protocol
+    protocol = PROTOCOLS[protocol_id]()
 
-    values = struct.unpack(protocol.getUnpackStr(), packet)
+    # Pull the values from the sent data and check if the data is valid.
+    values   = struct.unpack(protocol.getUnpackStr(), packet)
 
     # Check if the number of values matches what is expected for the datatype
-    if (len(protocol.data.keys()) != len(values) - NUM_SPECIAL_KEYS):
-      raise ValueError("Mismatch between the number of values in the protocol ({keys}) and packet ({pkt})".format(
-                        keys = len(protocol.data.keys()), 
-                        pkt  = len(values) - 1
-                      ))
+    value_cnt, expected_cnt = len(protocol.data.keys()), len(values) - NUM_SPECIAL_KEYS
+    if (value_cnt != expected_cnt):
+      raise ValueError("Mismatch between the number of values in the protocol (%d) and packet (%d)" % (value_cnt, expected_cnt))
 
 
     print("[INFO] Received packet: Protocol ID: {p_id} | hwID: {hwID}".format(p_id = values[0], hwID = values[1]))
 
     # Store the parsed values back into the protocol struct
+    # Store the special values
+    protocol.hwID       = values[1]
+    protocol.locationID = values[2]
+
+    # Store each of the data values
     for i, key in enumerate(protocol.data.keys()):
       protocol.setValue(key, values[i + NUM_SPECIAL_KEYS])
 
