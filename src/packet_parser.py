@@ -7,7 +7,7 @@
 # Imports
 # ==============
 import struct
-from   protocols.base import PROTOCOLS
+from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 
 
 class PacketParser:
@@ -53,7 +53,7 @@ class PacketParser:
     values = struct.unpack(protocol.getUnpackStr(), packet)
 
     # Check if the number of values matches what is expected for the datatype
-    if (len(protocol.data.keys()) != len(values) - 2):
+    if (len(protocol.data.keys()) != len(values) - NUM_SPECIAL_KEYS):
       raise ValueError("Mismatch between the number of values in the protocol ({keys}) and packet ({pkt})".format(
                         keys = len(protocol.data.keys()), 
                         pkt  = len(values) - 1
@@ -64,7 +64,7 @@ class PacketParser:
 
     # Store the parsed values back into the protocol struct
     for i, key in enumerate(protocol.data.keys()):
-      protocol.setValue(key, values[i + 2])
+      protocol.setValue(key, values[i + NUM_SPECIAL_KEYS])
 
 
     return protocol

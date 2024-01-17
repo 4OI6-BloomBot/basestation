@@ -14,6 +14,9 @@ from   abc import ABCMeta, abstractmethod
 # =============================================
 PROTOCOLS = {}
 
+# Constant - number of special keys in the protocol
+NUM_SPECIAL_KEYS = 3
+
 
 class BaseProtocol(metaclass = ABCMeta):
   
@@ -24,7 +27,8 @@ class BaseProtocol(metaclass = ABCMeta):
     self.id = id
 
     # Set defaults to None
-    self.hwID = None
+    self.hwID       = None
+    self.locationID = None
 
 
   # =============================================
