@@ -52,4 +52,4 @@ class ServerMiddleware():
     response = requests.post(url, json = json, headers = headers)
     
     # TODO: Handle response
-    print(response)
+    return response
