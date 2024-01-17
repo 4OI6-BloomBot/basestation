@@ -47,24 +47,24 @@ class PacketParser:
     if (protocol_id in PROTOCOLS):
       protocol = PROTOCOLS[protocol_id]()
     else:
-      print("[ERROR] Could not find protocol") # TODO: Make more verbose
+      raise ValueError("[ERROR] Could not find protocol with id={id}".format(id = protocol_id))
 
 
     values = struct.unpack(protocol.getUnpackStr(), packet)
-    print(f'Protocol: {values[0]}, temperature: {values[1]}, humidity: {values[2]}')
-
 
     # Check if the number of values matches what is expected for the datatype
-    if (len(protocol.data.keys()) != len(values) - 1):
+    if (len(protocol.data.keys()) != len(values) - 2):
       raise ValueError("Mismatch between the number of values in the protocol ({keys}) and packet ({pkt})".format(
                         keys = len(protocol.data.keys()), 
                         pkt  = len(values) - 1
                       ))
 
 
+    print("[INFO] Received packet: Protocol ID: {p_id} | hwID: {hwID}".format(p_id = values[0], hwID = values[1]))
+
     # Store the parsed values back into the protocol struct
     for i, key in enumerate(protocol.data.keys()):
-      protocol.setValue(key, values[i + 1])
+      protocol.setValue(key, values[i + 2])
 
 
     return protocol

@@ -111,7 +111,8 @@ class BaseProtocol(metaclass = ABCMeta):
   def getUnpackStr(self):
     # < - Little endian
     # B - Unsigned char (ID)
-    unpack_str = "<B"
+    # B - Unsigned char (hwID)
+    unpack_str = "<BB"
 
     for key in self.data:
       unpack_str += getTypeStr(self.data[key]["type"])
