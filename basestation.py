@@ -16,9 +16,9 @@ from   dotenv import load_dotenv
 load_dotenv()
 
 # Load other source files
-from   src.radio             import Radio
-from   src.packet_parser     import PacketParser
-from   src.server_middleware import ServerMiddleware
+from src.radio             import Radio
+from src.packet_parser     import PacketParser
+from src.server_middleware import ServerMiddleware
 
 # Import the individual protocols
 from protocols.location    import Location

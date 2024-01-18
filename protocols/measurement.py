@@ -32,6 +32,12 @@ class Measurement(BaseProtocol, metaclass = ABCMeta):
 
 
   # =============================================
+  # Translate single value entry
+  # =============================================
+  def setValue(self, val):
+    BaseProtocol.setValue(self, "value", val)
+
+  # =============================================
   # Unpack the value into the JSON object.
   # Check that the value has been set before
   # parsing
@@ -40,4 +46,4 @@ class Measurement(BaseProtocol, metaclass = ABCMeta):
     if ("value" not in self.data):
       raise ValueError("Value not provided for {name}".format(name = self.name))
     else:
-      json["value"] = self.data["value"]
+      json["value"] = self.data["value"]["value"]
