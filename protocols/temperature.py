@@ -12,11 +12,14 @@ from .base        import PROTOCOLS
 class Temperature(Measurement):
 
   data = {
-    "type"      : float,
-    "precision" : 6
+    "value" : {
+      "type"      : float,
+      "precision" : 6
+    }
   }
 
-  name = "Temperature"
+  name      = "Temperature"
+  sensor_ID = 1
 
 
   # =============================================
