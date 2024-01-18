@@ -28,7 +28,7 @@ class PacketParser:
   def monitorRxQueue(self):
     while (True):
       if len(self.PACKET_QUEUE) > 0:
-        result = self.parsePacket(self.PACKET_QUEUE.pop())
+        result = self.parsePacket(self.PACKET_QUEUE.pop(0))
 
         # Only process the result if it succeed
         if result is not None:
