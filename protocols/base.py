@@ -62,7 +62,7 @@ class BaseProtocol(metaclass = ABCMeta):
   # =============================================
   # Helper method to set a data value
   # =============================================
-  def setValue(self, key, val):
+  def setValue(self, val, key):
     # Check that the data key exists
     if (not self.checkDataKey(key)):
       raise ValueError("{key} does not exist in packet data".format(key = key))

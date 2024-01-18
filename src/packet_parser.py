@@ -68,7 +68,7 @@ class PacketParser:
 
     # Store each of the data values
     for i, key in enumerate(protocol.data.keys()):
-      protocol.setValue(key, values[i + NUM_SPECIAL_KEYS])
+      protocol.setValue(values[i + NUM_SPECIAL_KEYS], key)
 
 
     return protocol
