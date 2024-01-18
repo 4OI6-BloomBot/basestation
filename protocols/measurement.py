@@ -34,8 +34,8 @@ class Measurement(BaseProtocol, metaclass = ABCMeta):
   # =============================================
   # Translate single value entry
   # =============================================
-  def setValue(self, val):
-    BaseProtocol.setValue(self, "value", val)
+  def setValue(self, val, key = "value"):
+    BaseProtocol.setValue(self, val, key)
 
   # =============================================
   # Unpack the value into the JSON object.

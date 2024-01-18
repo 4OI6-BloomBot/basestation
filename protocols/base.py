@@ -14,6 +14,9 @@ from   abc import ABCMeta, abstractmethod
 # =============================================
 PROTOCOLS = {}
 
+# Constant - number of special keys in the protocol
+NUM_SPECIAL_KEYS = 3
+
 
 class BaseProtocol(metaclass = ABCMeta):
   
@@ -24,7 +27,8 @@ class BaseProtocol(metaclass = ABCMeta):
     self.id = id
 
     # Set defaults to None
-    self.hwID = None
+    self.hwID       = None
+    self.locationID = None
 
 
   # =============================================
@@ -58,7 +62,7 @@ class BaseProtocol(metaclass = ABCMeta):
   # =============================================
   # Helper method to set a data value
   # =============================================
-  def setValue(self, key, val):
+  def setValue(self, val, key):
     # Check that the data key exists
     if (not self.checkDataKey(key)):
       raise ValueError("{key} does not exist in packet data".format(key = key))
@@ -112,7 +116,8 @@ class BaseProtocol(metaclass = ABCMeta):
     # < - Little endian
     # B - Unsigned char (ID)
     # B - Unsigned char (hwID)
-    unpack_str = "<BB"
+    # B - Unsigned char (locationID)
+    unpack_str = "<BBB"
 
     for key in self.data:
       unpack_str += getTypeStr(self.data[key]["type"])
