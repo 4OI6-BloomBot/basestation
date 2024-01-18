@@ -29,12 +29,12 @@ class ServerMiddleware():
   def monitorServerQueue(self):
     while(True):
       if len(self.SERVER_QUEUE) > 0:
-        pkt      = self.SERVER_QUEUE.pop()
+        pkt      = self.SERVER_QUEUE.pop(0)
         response = self.sendData(pkt)
 
         # Update the location handler if it was a location pkt
         if (LocationHandler.isLocationPkt(pkt)):
-          self.location.addLocation(pkt.locationID, response)
+          self.location.addLocation(pkt.hwID, pkt.locationID, response)
 
 
   # ==================================================

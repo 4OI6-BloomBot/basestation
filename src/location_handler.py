@@ -17,18 +17,22 @@ class LocationHandler():
   # ========================================================
   def __init__(self):
     # Dictionary to map HW locationIDs to IDs in the server
-    self.map    = {}
+    self.map = {}
 
 
   # ========================================================
   # getServerID - Checks if the ID has been registered and
   #               returns the ID of the obj in the server.
   # ========================================================
-  def getServerID(self, hwID):
-    if hwID in self.map:
-      return self.map[hwID]
+  def getServerID(self, hwID, locationID):
+    if (hwID not in self.map):
+      return None
     
-    return None
+    if (locationID not in self.map[hwID]):
+      return None
+        
+    return self.map[hwID][locationID]
+    
     
 
   # ======================================================
@@ -43,7 +47,7 @@ class LocationHandler():
     # TODO: if the basestation gets a location ID that isn't in the
     #       server it should probably re-queue the packet (?)
     if (pkt.locationID):
-      return self.location.getServerID(pkt.locationID)
+      return self.getServerID(pkt.hwID, pkt.locationID)
       
   
 
@@ -51,10 +55,15 @@ class LocationHandler():
   # addLocation - Registers the location with the server
   #               and adds the ID of the object to the map.
   # ========================================================
-  def addLocation(self, hwID, response):    
+  def addLocation(self, hwID, locationID, response):    
     if (response.status_code == 201):
       response_data  = response.json()
-      self.map[hwID] = response_data["id"]
+
+      # Check if the device has been registered.
+      if (hwID not in self.map):
+        self.map[hwID] = {}
+
+      self.map[hwID][locationID] = response_data["id"]
 
 
   # ========================================================
