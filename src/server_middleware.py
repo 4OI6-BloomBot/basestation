@@ -7,6 +7,7 @@
 # Imports
 # ==============
 import requests, os
+from   .location_handler import LocationHandler
 
 class ServerMiddleware():
 
@@ -18,6 +19,7 @@ class ServerMiddleware():
   # ==================================================
   def __init__(self, server_queue):
     self.SERVER_QUEUE = server_queue
+    self.location     = LocationHandler()
 
 
   # ==================================================
@@ -27,22 +29,29 @@ class ServerMiddleware():
   def monitorServerQueue(self):
     while(True):
       if len(self.SERVER_QUEUE) > 0:
-        self.sendData(self.SERVER_QUEUE.pop())
+        pkt      = self.SERVER_QUEUE.pop()
+        response = self.sendData(pkt)
+
+        # Update the location handler if it was a location pkt
+        if (LocationHandler.isLocationPkt(pkt)):
+          self.location.addLocation(pkt.locationID, response)
 
 
   # ==================================================
   # sendData - Send the given packet to the server
   # ==================================================
-  def sendData(self, protocol):
+  def sendData(self, pkt):
 
-    # TODO: Need to parse hwID from packet.
-    protocol.hwID = 123
+    json = pkt.toJSON()
 
-    json = protocol.toJSON()
-    
+    # Add location data if available
+    location_id = self.location.convertHWLocation(pkt)
+    if (location_id):
+      json["location"] = location_id
+
     # Construct POST data
     headers = {'Content-Type': 'application/json'}
-    url     = ServerMiddleware.API_ADDR + protocol.endpoint
+    url     = ServerMiddleware.API_ADDR + pkt.endpoint
     
     # Need to ensure that there is a trailing / in the URL
     if (url[len(url) - 1] != '/'):
@@ -51,5 +60,5 @@ class ServerMiddleware():
     # Send POST request
     response = requests.post(url, json = json, headers = headers)
     
-    # TODO: Handle response
+
     return response
