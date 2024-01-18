@@ -14,6 +14,9 @@ This repository is for the software run on the BloomBot basestation. The basesta
 python -m pip install -r requirements.txt
 ```
 
+### Environment Variables
+An environment file should be provided in the root directory to properly configure the script. An example is included in the repo as [.env_example](.env_example).
+
 ## Changes
 The main branch is protected from direct writes, ideally create a new branch to work in then merge it in with a pull request when ready.
 
