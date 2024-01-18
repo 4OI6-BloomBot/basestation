@@ -17,6 +17,9 @@ python -m pip install -r requirements.txt
 ### Environment Variables
 An environment file should be provided in the root directory to properly configure the script. An example is included in the repo as [.env_example](.env_example).
 
+## Deployment
+An autostart script is provided as [start.sh](start.sh) which pulls the latest changes and installs requirements before starting the basestation.
+
 ## Changes
 The main branch is protected from direct writes, ideally create a new branch to work in then merge it in with a pull request when ready.
 
