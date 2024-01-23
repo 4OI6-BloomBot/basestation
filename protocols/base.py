@@ -90,6 +90,8 @@ class BaseProtocol(metaclass = ABCMeta):
       "hwID" : self.hwID
     }
 
+    # TODO: Should add current time if not set
+    json["datetime"] = self.timestamp
 
     # Apply the set precision to the data
     self.applyPrecision()
