@@ -15,7 +15,7 @@ from   abc import ABCMeta, abstractmethod
 PROTOCOLS = {}
 
 # Constant - number of special keys in the protocol
-NUM_SPECIAL_KEYS = 3
+NUM_SPECIAL_KEYS = 4
 
 
 class BaseProtocol(metaclass = ABCMeta):
@@ -29,6 +29,7 @@ class BaseProtocol(metaclass = ABCMeta):
     # Set defaults to None
     self.hwID       = None
     self.locationID = None
+    self.timestamp  = None
 
 
   # =============================================
@@ -117,7 +118,8 @@ class BaseProtocol(metaclass = ABCMeta):
     # B - Unsigned char (ID)
     # B - Unsigned char (hwID)
     # B - Unsigned char (locationID)
-    unpack_str = "<BBB"
+    # L - Unsigned long (epoch)
+    unpack_str = "<BBBL"
 
     for key in self.data:
       unpack_str += getTypeStr(self.data[key]["type"])
@@ -133,13 +135,13 @@ class BaseProtocol(metaclass = ABCMeta):
     for key in self.data:
       if (self.data[key].keys() >= {"precision", "value"}):
           
-          # Python's round function only accounts for the number of decimal points. The server needs a consistent total number
-          # of digits. Therefore subtract the int portion from the precision to get the number of digits we need to round.
-          # TODO: This would affect the precision of some values. Can likely ignore since our equip is not sensitive
-          #       enough for 10^-6/5 or what have you
-          rounding_digits = self.data[key]["precision"] - int(math.ceil(math.log10(abs(self.data[key]["value"]))))
-          
-          self.data[key]["value"] = round(self.data[key]["value"], rounding_digits)
+        # Python's round function only accounts for the number of decimal points. The server needs a consistent total number
+        # of digits. Therefore subtract the int portion from the precision to get the number of digits we need to round.
+        # TODO: This would affect the precision of some values. Can likely ignore since our equip is not sensitive
+        #       enough for 10^-6/5 or what have you
+        rounding_digits = self.data[key]["precision"] - int(math.ceil(math.log10(abs(self.data[key]["value"]))))
+        
+        self.data[key]["value"] = round(self.data[key]["value"], rounding_digits)
 
 
 

@@ -65,6 +65,7 @@ class PacketParser:
     # Store the special values
     protocol.hwID       = values[1]
     protocol.locationID = values[2]
+    protocol.timestamp  = values[3]
 
     # Store each of the data values
     for i, key in enumerate(protocol.data.keys()):
