@@ -15,7 +15,7 @@ from .base import BaseProtocol
 class Measurement(BaseProtocol, metaclass = ABCMeta):
 
   # Set endpoint but leave others abstracted
-  endpoint = "measurement"
+  endpoint = "measurements"
 
   # Add sensor ID field to match with server declaration
   @property
@@ -47,3 +47,8 @@ class Measurement(BaseProtocol, metaclass = ABCMeta):
       raise ValueError("Value not provided for {name}".format(name = self.name))
     else:
       json["value"] = self.data["value"]["value"]
+
+    # Add sensorID
+    json["sensor"] = {
+      "id" : self.sensor_ID
+    }
