@@ -6,7 +6,8 @@
 # Imports
 # ================================
 import math
-from   abc import ABCMeta, abstractmethod
+from   abc      import ABCMeta, abstractmethod
+from   datetime import datetime
 
 # =============================================
 # Declare protocol types in a dictionary with
@@ -90,8 +91,15 @@ class BaseProtocol(metaclass = ABCMeta):
       "hwID" : self.hwID
     }
 
-    # TODO: Should add current time if not set
-    json["datetime"] = self.timestamp
+    # TODO: Not sure if this is the best way to handle no time sent from
+    #       device.
+    if (self.timestamp == 0):
+      json["datetime"] = datetime.now()
+    else:
+      json["datetime"] = datetime(self.timestamp)
+
+    # Convert the time to a string that can be accepted by the server.
+    json["datetime"] = json["datetime"].strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Apply the set precision to the data
     self.applyPrecision()
