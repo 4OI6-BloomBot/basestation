@@ -39,7 +39,7 @@ server_rx_queue = []
 server_tx_queue = []
 
 # Create the classes and pass them their respective queues
-radio  = Radio(radio_rx_queue)
+radio  = Radio(radio_rx_queue, radio_tx_queue)
 parser = PacketParser(radio_rx_queue, radio_tx_queue, server_rx_queue, server_tx_queue)
 server = ServerMiddleware(server_tx_queue)
 
@@ -48,7 +48,7 @@ server = ServerMiddleware(server_tx_queue)
 # Create and start threads
 # ==============================
 rxThread     = threading.Thread(target=radio.listen)
-txThread     = threading.Thread(target=radio.send)
+txThread     = threading.Thread(target=radio.monitorTxQueue)
 serverThread = threading.Thread(target=server.monitorServerQueue)
 
 parser.startQueueMonitoring()
