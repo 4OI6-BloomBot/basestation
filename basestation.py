@@ -25,21 +25,22 @@ from protocols.location    import Location
 from protocols.temperature import Temperature
 
 
-# ==================================================
+# ========================================================
 # Global vars:
-# ==================================================
-#   packet_queue: Used to queue the received packets
-#                 from the radio module.
-#   data_queue:   Used to queue the parsed data
-#                 from the radio packets
-# ==================================================
-packet_queue = [] 
-data_queue   = []
+# ========================================================
+#   radio_rx_queue:   Used to queue the received packets
+#                     from the radio module.
+#   server_tx_queue:  Used to queue the parsed data
+#                     from the radio packets
+# ========================================================
+radio_rx_queue  = []
+radio_tx_queue  = [] 
+server_tx_queue = []
 
 # Create the classes and pass them their respective queues
-radio  = Radio(packet_queue)
-parser = PacketParser(packet_queue, data_queue)
-server = ServerMiddleware(data_queue)
+radio  = Radio(radio_rx_queue)
+parser = PacketParser(radio_rx_queue, server_tx_queue)
+server = ServerMiddleware(server_tx_queue)
 
 
 # ==============================

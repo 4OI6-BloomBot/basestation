@@ -16,20 +16,27 @@ class Radio:
   # ================================================
   # Constructor
   # ================================================
-  def __init__(self, packet_queue, gpio_port = 8888):
+  def __init__(self, rx_queue, tx_queue, gpio_port = 8888):
     self.RX_ADDRESS   = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
     self.TX_ADDRESS   = "2SNSR"    
     self.GPIO_PORT    = gpio_port
-    self.PACKET_QUEUE = packet_queue
 
+    self.RECEIVE_QUEUE  = rx_queue
+    self.TRANSMIT_QUEUE = tx_queue
+
+    # =========================================
     # Attempt to connect to the Pi GPIO daemon
+    # =========================================
     self.gpio = pigpio.pi("localhost", self.GPIO_PORT)
     
     if not self.gpio.connected:
       print("[ERROR] Could not connect to the GPIO daemon. Please make sure it is running.")
       sys.exit()
 
+
+    # =========================================
     # Create the NRF24 object
+    # =========================================
     self.radio = NRF24(self.gpio, 
                      ce           = 25,
                      payload_size = RF24_PAYLOAD.DYNAMIC,
@@ -39,6 +46,7 @@ class Radio:
     
     self.radio.set_address_bytes(len(self.RX_ADDRESS))
     self.radio.set_address_bytes(len(self.TX_ADDRESS))
+
 
 
   # ==================================================
@@ -63,8 +71,7 @@ class Radio:
 
             # Only process the data if it properly exists
             if (len(payload) > 0):
-              self.PACKET_QUEUE.append(payload)
-              # self.parseData(payload)
+              self.RECEIVE_QUEUE.append(payload)
 
           # Sleep 100 ms.
           time.sleep(0.1)
@@ -74,6 +81,11 @@ class Radio:
       self.radio.power_down()
       self.gpio.stop()
 
+
+
+  # ==================================================
+  # send - Loop to watch for new packets to transmit
+  # ==================================================
   def send(self):
     self.radio.open_writing_pipe(self.TX_ADDRESS)
 
