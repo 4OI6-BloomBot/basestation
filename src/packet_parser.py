@@ -33,11 +33,11 @@ class PacketParser:
   #                        queues.
   # ======================================================
   def startQueueMonitoring(self):
-    tx_queue = threading.Thread(target = self.monitorTxQueue)
-    rx_queue = threading.Thread(target = self.monitorRxQueue)
+    server_rx = threading.Thread(target = self.monitorServerRxQueue)
+    radio_rx  = threading.Thread(target = self.monitorRadioRxQueue)
 
-    tx_queue.start()
-    rx_queue.start()
+    server_rx.start()
+    radio_rx.start()
 
 
   # ==================================================
