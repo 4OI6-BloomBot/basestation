@@ -13,12 +13,19 @@ from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 class PacketParser:
 
   # ================================================== 
-  # Constructor - Requires a shared queue that is 
-  #               populated with received packets.
+  # Constructor - Requires access to the radio and 
+  #               server shared queues to convert
+  #               between formats.
   # ==================================================
-  def __init__(self, packet_queue, data_queue):
-    self.PACKET_QUEUE = packet_queue
-    self.DATA_QUEUE   = data_queue
+  def __init__(self, radio_rx_queue, radio_tx_queue, server_rx_queue, server_tx_queue):
+    # From Radio to Server
+    self.RX_INPUT_QUEUE  = radio_rx_queue
+    self.RX_PARSED_QUEUE = server_tx_queue
+
+    # From Server to Radio
+    self.TX_INPUT_QUEUE  = server_rx_queue
+    self.TX_PARSED_QUEUE = radio_tx_queue
+
 
 
   # ==================================================
@@ -27,12 +34,13 @@ class PacketParser:
   # ==================================================
   def monitorRxQueue(self):
     while (True):
-      if len(self.PACKET_QUEUE) > 0:
-        result = self.parsePacket(self.PACKET_QUEUE.pop(0))
+      if len(self.RX_INPUT_QUEUE) > 0:
+        result = self.parsePacket(self.RX_INPUT_QUEUE.pop(0))
 
         # Only process the result if it succeed
         if result is not None:
-          self.DATA_QUEUE.append(result)
+          self.RX_PARSED_QUEUE.append(result)
+
 
 
   # ==================================================
