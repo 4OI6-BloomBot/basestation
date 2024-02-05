@@ -48,6 +48,20 @@ class Location(BaseProtocol):
         json[key] = self.data[key]["value"]
 
 
+  # ==================================================
+  # Returns a list containing all values of the packet
+  # ==================================================
+  def getValuesList(self):
+    values = []
+
+    for key in self.data:
+      if ("value" not in self.data[key]):
+        raise ValueError("Value not provided for {name}".format(name = key))
+      else:
+        values.append(self.data[key]["value"])
+    
+    return values
+
 
 # =============================================
 # Add Location to protocol type dictionary

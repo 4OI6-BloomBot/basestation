@@ -121,6 +121,15 @@ class BaseProtocol(metaclass = ABCMeta):
 
 
   # ==================================================
+  # Method implemented by children to return a list
+  # containing all values
+  # ==================================================
+  @abstractmethod
+  def getValuesList(self):
+    pass
+
+
+  # ==================================================
   # Construct the string for the byte pack function
   # ==================================================
   def getBytePackStr(self):
