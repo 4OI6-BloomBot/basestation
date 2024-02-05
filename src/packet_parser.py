@@ -118,5 +118,22 @@ class PacketParser:
   #              packet in prep for transmission.
   # ==================================================
   def packPacket(self, packet):
+    
+    # Construct a data array
+    data = []
+    
+    # Add the protocol type (ID) and HW ID 
+    data[0] = packet.id
+    data[1] = packet.hwID
+    
+    # Add the remaining data to the packet
+    data += packet.getValuesList()
+    
     print(packet)
-    return
+    print(data)
+
+    # Pack the data
+    b = struct.pack(packet.getBytePackStr(), *data)
+    print(b)
+
+    return b
