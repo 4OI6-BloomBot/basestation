@@ -51,7 +51,7 @@ class PacketParser:
     protocol = PROTOCOLS[protocol_id]()
 
     # Pull the values from the sent data and check if the data is valid.
-    values   = struct.unpack(protocol.getUnpackStr(), packet)
+    values   = struct.unpack(protocol.getBytePackStr(), packet)
 
     # Check if the number of values matches what is expected for the datatype
     value_cnt, expected_cnt = len(protocol.data.keys()), len(values) - NUM_SPECIAL_KEYS

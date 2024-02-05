@@ -121,9 +121,9 @@ class BaseProtocol(metaclass = ABCMeta):
 
 
   # ==================================================
-  # Construct the string for the unpack function
+  # Construct the string for the byte pack function
   # ==================================================
-  def getUnpackStr(self):
+  def getBytePackStr(self):
     # < - Little endian
     # B - Unsigned char (ID)
     # B - Unsigned char (hwID)
