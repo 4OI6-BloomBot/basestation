@@ -19,12 +19,12 @@ class PacketParser:
   # ==================================================
   def __init__(self, radio_rx_queue, radio_tx_queue, server_rx_queue, server_tx_queue):
     # From Radio to Server
-    self.RX_INPUT_QUEUE  = radio_rx_queue
-    self.RX_PARSED_QUEUE = server_tx_queue
+    self.RADIO_RX_QUEUE  = radio_rx_queue
+    self.SERVER_TX_QUEUE = server_tx_queue
 
     # From Server to Radio
-    self.TX_INPUT_QUEUE  = server_rx_queue
-    self.TX_PARSED_QUEUE = radio_tx_queue
+    self.SERVER_RX_QUEUE = server_rx_queue
+    self.RADIO_TX_QUEUE  = radio_tx_queue
 
 
 
@@ -41,32 +41,34 @@ class PacketParser:
 
 
   # ==================================================
-  # monitorTxQueue - Monitor the Tx queue for new 
-  #                  entries and parse them.
+  # monitorServerRxQueue - Monitor the server Rx queue 
+  #                        for new entries and parse
+  #                        them.
   # ==================================================
-  def monitorTxQueue(self):
+  def monitorServerRxQueue(self):
     while (True):
-      if len(self.TX_INPUT_QUEUE) > 0:
-        result = self.packPacket(self.TX_INPUT_QUEUE.pop(0))
+      if len(self.SERVER_RX_QUEUE) > 0:
+        result = self.packPacket(self.SERVER_RX_QUEUE.pop(0))
 
         # Only process the result if it succeed
         if result is not None:
-          self.TX_PARSED_QUEUE.append(result)
+          self.RADIO_TX_QUEUE.append(result)
 
 
 
   # ==================================================
-  # monitorRxQueue - Monitor the Rx queue for new 
-  #                  entries and parse them.
+  # monitorRadioRxQueue - Monitor the radio Rx queue  
+  #                       for new entries and parse
+  #                       them.
   # ==================================================
-  def monitorRxQueue(self):
+  def monitorRadioRxQueue(self):
     while (True):
-      if len(self.RX_INPUT_QUEUE) > 0:
-        result = self.parsePacket(self.RX_INPUT_QUEUE.pop(0))
+      if len(self.RADIO_RX_QUEUE) > 0:
+        result = self.parsePacket(self.RADIO_RX_QUEUE.pop(0))
 
         # Only process the result if it succeed
         if result is not None:
-          self.RX_PARSED_QUEUE.append(result)
+          self.SERVER_TX_QUEUE.append(result)
 
 
 
