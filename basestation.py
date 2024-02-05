@@ -56,9 +56,12 @@ if ("NO_RADIO" not in os.environ):
 serverThread = threading.Thread(target=server.monitorServerQueue)
 
 
+if ("NO_RADIO" not in os.environ):
+  rxThread.start()
+  txThread.start()
+  
 parser.startQueueMonitoring()
-rxThread.start()
 serverThread.start()
-txThread.start()
+
 
 # TODO: Add way to gracefully stop
