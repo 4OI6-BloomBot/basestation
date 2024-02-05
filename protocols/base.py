@@ -132,14 +132,20 @@ class BaseProtocol(metaclass = ABCMeta):
   # ==================================================
   # Construct the string for the byte pack function
   # ==================================================
-  def getBytePackStr(self):
+  def getBytePackStr(self, isRx = True):
     # < - Little endian
     # B - Unsigned char (ID)
     # B - Unsigned char (hwID)
-    # B - Unsigned char (locationID)
-    # L - Unsigned long (epoch)
-    unpack_str = "<BBBL"
+    # B - Unsigned char (locationID) (Rx only)
+    # L - Unsigned long (epoch)      (Rx only)
+    unpack_str = "<BB"
+    
+    # Add the additional data types to the Rx unpack str
+    if (isRx): 
+      unpack_str += "BL"
 
+
+    # Add each of the values to the string
     for key in self.data:
       unpack_str += getTypeStr(self.data[key]["type"])
 
