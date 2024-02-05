@@ -6,7 +6,7 @@
 # ==============
 # Imports
 # ==============
-import struct
+import struct, threading
 from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 
 
@@ -28,9 +28,36 @@ class PacketParser:
 
 
 
+  # ======================================================
+  # startQueueMonitoring - Starts threads for each of the 
+  #                        queues.
+  # ======================================================
+  def startQueueMonitoring(self):
+    tx_queue = threading.Thread(target = self.monitorTxQueue)
+    rx_queue = threading.Thread(target = self.monitorRxQueue)
+
+    tx_queue.start()
+    rx_queue.start()
+
+
   # ==================================================
-  # monitorQueue - Monitor the queue for new entries
-  #                and parse them.
+  # monitorTxQueue - Monitor the Tx queue for new 
+  #                  entries and parse them.
+  # ==================================================
+  def monitorTxQueue(self):
+    while (True):
+      if len(self.TX_INPUT_QUEUE) > 0:
+        result = self.packPacket(self.TX_INPUT_QUEUE.pop(0))
+
+        # Only process the result if it succeed
+        if result is not None:
+          self.TX_PARSED_QUEUE.append(result)
+
+
+
+  # ==================================================
+  # monitorRxQueue - Monitor the Rx queue for new 
+  #                  entries and parse them.
   # ==================================================
   def monitorRxQueue(self):
     while (True):
@@ -81,5 +108,13 @@ class PacketParser:
 
 
     return protocol
-    
 
+
+
+  # ==================================================
+  # packPacket - Create a bytestring with the given
+  #              packet in prep for transmission.
+  # ==================================================
+  def packPacket(self, packet):
+    print(packet)
+    return

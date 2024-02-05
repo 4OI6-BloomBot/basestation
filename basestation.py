@@ -49,11 +49,10 @@ server = ServerMiddleware(server_tx_queue)
 # ==============================
 rxThread     = threading.Thread(target=radio.listen)
 txThread     = threading.Thread(target=radio.send)
-parserThread = threading.Thread(target=parser.monitorRxQueue)
 serverThread = threading.Thread(target=server.monitorServerQueue)
 
+parser.startQueueMonitoring()
 rxThread.start()
-parserThread.start()
 serverThread.start()
 txThread.start()
 
