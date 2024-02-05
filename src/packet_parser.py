@@ -118,22 +118,21 @@ class PacketParser:
   #              packet in prep for transmission.
   # ==================================================
   def packPacket(self, packet):
-    
-    # Construct a data array
     data = []
     
+    # Check that the required data exists
+    if (packet.hwID is None):
+      raise ValueError("No device hardware ID is set.")
+    
+    if (packet.id is None):
+      raise ValueError("No protocol ID is set")
+
     # Add the protocol type (ID) and HW ID 
-    data[0] = packet.id
-    data[1] = packet.hwID
+    data.append(packet.id)
+    data.append(packet.hwID)
     
     # Add the remaining data to the packet
     data += packet.getValuesList()
     
-    print(packet)
-    print(data)
-
     # Pack the data
-    b = struct.pack(packet.getBytePackStr(), *data)
-    print(b)
-
-    return b
+    return struct.pack(packet.getBytePackStr(isRx = False), *data)
