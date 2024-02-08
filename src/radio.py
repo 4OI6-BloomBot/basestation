@@ -121,22 +121,11 @@ class Radio:
   # ==================================================
   # send - Loop to watch for new packets to transmit
   # ==================================================
-  def send(self, packet):
-    # Emulate that we read temperature and humidity from a sensor, for example
-    # a DHT22 sensor.  Add a little random variation so we can see that values
-    # sent/received fluctuate a bit.
-    temperature = normalvariate(23.0, 0.5)
-    humidity    = normalvariate(62.0, 0.5)
-    print(f'Sensor values: temperature={temperature}, humidity={humidity}')
-
-    # Pack temperature and humidity into a byte buffer (payload) using a protocol 
-    # signature of 0x01 so that the receiver knows that the bytes we are sending 
-    # are a temperature and a humidity (see "simple-receiver.py").
-    payload = struct.pack("<Bff", 0x01, temperature, humidity)
-
+  def send(self, data):
+    
     # Send the payload to the address specified above.
     self.radio.reset_packages_lost()
-    self.radio.send(payload)
+    self.radio.send(data)
 
     self.radio.wait_until_sent()
     
