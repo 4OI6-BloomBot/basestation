@@ -23,6 +23,7 @@ from src.server_middleware import ServerMiddleware
 # Import the individual protocols
 from protocols.location    import Location
 from protocols.temperature import Temperature
+from protocols.config      import Config
 
 
 # ========================================================
