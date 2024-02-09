@@ -7,7 +7,8 @@
 # Imports
 # ==============
 import requests, os
-from   .location_handler import LocationHandler
+from   .location_handler  import LocationHandler
+from   protocols.config import Config
 
 class ServerMiddleware():
 
@@ -85,14 +86,21 @@ class ServerMiddleware():
   def getConfig(self, hwID):
 
     # Create the endpoint URL
-    url = self.getAPIURL() + "config/" + hwID
+    url = self.getAPIURL() + "config/" + str(hwID)
 
     # Query the server
     response = requests.get(url)
     data     = response.json()
 
     # If there is an error response
+    # TODO: Handle and make verbose.
     if (response.status_code != 200):
       print("ERROR")
+      return
 
-    return
+    # Create a new Config packet and add it to the queue
+    config      = Config()
+    config.hwID = hwID
+    config.parseJSON(data)
+
+    self.SERVER_RX_QUEUE.append(config)
