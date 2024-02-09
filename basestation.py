@@ -43,7 +43,7 @@ if ("NO_RADIO" not in os.environ):
   radio  = Radio(radio_rx_queue, radio_tx_queue)
 
 parser = PacketParser(radio_rx_queue, radio_tx_queue, server_rx_queue, server_tx_queue)
-server = ServerMiddleware(server_tx_queue)
+server = ServerMiddleware(server_tx_queue, server_rx_queue)
 
 
 # ==============================
@@ -53,7 +53,7 @@ if ("NO_RADIO" not in os.environ):
   rxThread = threading.Thread(target=radio.listen)
   txThread = threading.Thread(target=radio.monitorTxQueue)
 
-serverThread = threading.Thread(target=server.monitorServerQueue)
+serverThread = threading.Thread(target=server.monitorTxQueue)
 
 
 if ("NO_RADIO" not in os.environ):

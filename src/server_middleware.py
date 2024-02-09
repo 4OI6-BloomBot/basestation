@@ -17,19 +17,20 @@ class ServerMiddleware():
   # Constructor - Requires a shared queue that is 
   #               populated with parsed packets
   # ==================================================
-  def __init__(self, server_queue):
-    self.SERVER_QUEUE = server_queue
-    self.location     = LocationHandler()
+  def __init__(self, server_tx_queue, server_rx_queue):
+    self.SERVER_TX_QUEUE = server_tx_queue
+    self.SERVER_RX_QUEUE = server_rx_queue
+    self.location        = LocationHandler()
 
 
   # ==================================================
-  # monitorServerQueue - Monitor the queue for new 
-  #                      entries and parse them.
+  # monitorTxQueue - Monitor the Tx queue for new 
+  #                  entries and parse them.
   # ==================================================
-  def monitorServerQueue(self):
+  def monitorTxQueue(self):
     while(True):
-      if len(self.SERVER_QUEUE) > 0:
-        pkt      = self.SERVER_QUEUE.pop(0)
+      if len(self.SERVER_TX_QUEUE) > 0:
+        pkt      = self.SERVER_TX_QUEUE.pop(0)
         response = self.sendData(pkt)
 
         # Update the location handler if it was a location pkt
