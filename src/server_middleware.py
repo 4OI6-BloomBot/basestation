@@ -6,7 +6,7 @@
 # ==============
 # Imports
 # ==============
-import requests, os
+import requests, os, time
 from   .location_handler  import LocationHandler
 from   protocols.config import Config
 
@@ -37,6 +37,22 @@ class ServerMiddleware():
         # Update the location handler if it was a location pkt
         if (LocationHandler.isLocationPkt(pkt)):
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
+
+
+  # =======================================================
+  # pollConfig - Poll the server for configurations.
+  #              TODO: This is a bit messy right now, 
+  #                    Shouldn't keep sending configs
+  #                    Relying on the location map works
+  #                    but is not ideal.
+  # =======================================================
+  def pollConfig(self):
+    while(True):
+      for hwID in self.location.map:
+        self.getConfig(hwID)
+      
+      # Wait before polling again
+      time.sleep(30)
 
 
   # ======================================================

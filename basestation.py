@@ -51,10 +51,11 @@ server = ServerMiddleware(server_tx_queue, server_rx_queue)
 # Create and start threads
 # ==============================
 if ("NO_RADIO" not in os.environ):
-  rxThread = threading.Thread(target=radio.listen)
-  txThread = threading.Thread(target=radio.monitorTxQueue)
+  rxThread = threading.Thread(target = radio.listen)
+  txThread = threading.Thread(target = radio.monitorTxQueue)
 
-serverThread = threading.Thread(target=server.monitorTxQueue)
+serverTxThread = threading.Thread(target = server.monitorTxQueue)
+serverRxThread = threading.Thread(target = server.pollConfig)
 
 
 if ("NO_RADIO" not in os.environ):
@@ -62,7 +63,8 @@ if ("NO_RADIO" not in os.environ):
   txThread.start()
   
 parser.startQueueMonitoring()
-serverThread.start()
+serverTxThread.start()
+serverRxThread.start()
 
 
 # TODO: Add way to gracefully stop
