@@ -34,4 +34,4 @@ class Temperature(Measurement):
 # Add Temperature to protocol type dictionary
 # TODO: Cleaner way to do this?
 # =============================================
-PROTOCOLS[2] = Temperature
+PROTOCOLS[3] = Temperature

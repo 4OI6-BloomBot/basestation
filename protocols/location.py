@@ -32,7 +32,7 @@ class Location(BaseProtocol):
   # Constructor
   # ============================================= 
   def __init__(self):
-    super().__init__(1)
+    super().__init__(2)
 
 
   # =============================================
@@ -67,4 +67,4 @@ class Location(BaseProtocol):
 # Add Location to protocol type dictionary
 # TODO: Cleaner way to do this?
 # =============================================
-PROTOCOLS[1] = Location
+PROTOCOLS[2] = Location
