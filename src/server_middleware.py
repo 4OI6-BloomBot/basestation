@@ -37,6 +37,20 @@ class ServerMiddleware():
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
 
 
+  # ======================================================
+  # getAPIURL - Accessor method to make sure that the API
+  #             URL is formatted correctly.
+  # ======================================================
+  def getAPIURL(self):
+    url = self.API_ADDR
+    
+    # Need to ensure that there is a trailing / in the URL
+    if (url[len(url) - 1] != '/'):
+      url += "/"
+
+    return url
+
+
   # ==================================================
   # sendData - Send the given packet to the server
   # ==================================================
@@ -51,7 +65,7 @@ class ServerMiddleware():
 
     # Construct POST data
     headers = {'Content-Type': 'application/json'}
-    url     = ServerMiddleware.API_ADDR + pkt.endpoint
+    url     = self.getAPIURL() + pkt.endpoint
     
     # Need to ensure that there is a trailing / in the URL
     if (url[len(url) - 1] != '/'):
@@ -62,3 +76,22 @@ class ServerMiddleware():
     
 
     return response
+  
+
+  # =====================================================
+  # getConfig - Queries the server for the device config
+  # =====================================================
+  def getConfig(self, hwID):
+
+    # Create the endpoint URL
+    url = self.getAPIURL() + "config/" + hwID
+
+    # Query the server
+    response = requests.get(url)
+    data     = response.json()
+
+    # If there is an error response
+    if (response.status_code != 200):
+      print("ERROR")
+
+    return
