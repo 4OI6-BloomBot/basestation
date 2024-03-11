@@ -96,8 +96,8 @@ class BaseProtocol(metaclass = ABCMeta):
     if (self.timestamp == 0):
       json["datetime"] = datetime.now()
     else:
-      json["datetime"] = datetime(self.timestamp)
-
+      json["datetime"] = datetime.utcfromtimestamp(self.timestamp)
+  
     # Convert the time to a string that can be accepted by the server.
     json["datetime"] = json["datetime"].strftime("%Y-%m-%dT%H:%M:%SZ")
 
