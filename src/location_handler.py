@@ -55,9 +55,11 @@ class LocationHandler():
   # addLocation - Registers the location with the server
   #               and adds the ID of the object to the map.
   # ========================================================
-  def addLocation(self, hwID, locationID, response):    
+  def addLocation(self, hwID, locationID, response): 
+    print(response.status_code)
+    print(response.content)   
     if (response.status_code == 201):
-      response_data  = response.json()
+      response_data = response.json()
 
       # Check if the device has been registered.
       if (hwID not in self.map):
