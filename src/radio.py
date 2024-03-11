@@ -6,7 +6,7 @@
 # Imports
 # ================================================
 import struct
-import sys, time
+import sys, time, os
 import pigpio
 from   random import normalvariate
 from   nrf24  import *
@@ -16,20 +16,27 @@ class Radio:
   # ================================================
   # Constructor
   # ================================================
-  def __init__(self, packet_queue, gpio_port = 8888):
+  def __init__(self, rx_queue, tx_queue, gpio_port = 8888):
     self.RX_ADDRESS   = "1SNSR"    # TODO: For just Rx we can leave this to match the Tx for now. For bidirectional we need to revisit how to structure the addr.
     self.TX_ADDRESS   = "2SNSR"    
     self.GPIO_PORT    = gpio_port
-    self.PACKET_QUEUE = packet_queue
 
+    self.RECEIVE_QUEUE  = rx_queue
+    self.TRANSMIT_QUEUE = tx_queue
+
+    # =========================================
     # Attempt to connect to the Pi GPIO daemon
+    # =========================================
     self.gpio = pigpio.pi("localhost", self.GPIO_PORT)
     
     if not self.gpio.connected:
       print("[ERROR] Could not connect to the GPIO daemon. Please make sure it is running.")
       sys.exit()
 
+
+    # =========================================
     # Create the NRF24 object
+    # =========================================
     self.radio = NRF24(self.gpio, 
                      ce           = 25,
                      payload_size = RF24_PAYLOAD.DYNAMIC,
@@ -39,6 +46,7 @@ class Radio:
     
     self.radio.set_address_bytes(len(self.RX_ADDRESS))
     self.radio.set_address_bytes(len(self.TX_ADDRESS))
+
 
 
   # ==================================================
@@ -63,8 +71,7 @@ class Radio:
 
             # Only process the data if it properly exists
             if (len(payload) > 0):
-              self.PACKET_QUEUE.append(payload)
-              # self.parseData(payload)
+              self.RECEIVE_QUEUE.append(payload)
 
           # Sleep 100 ms.
           time.sleep(0.1)
@@ -74,50 +81,57 @@ class Radio:
       self.radio.power_down()
       self.gpio.stop()
 
-  def send(self):
+
+
+  # ===========================================================
+  # monitorTxQueue - Continuously monitor the Tx queue for new
+  #                  entries.
+  # ===========================================================
+  def monitorTxQueue(self):
+
+    # ===========================
+    # Initialize Tx
+    # ===========================
     self.radio.open_writing_pipe(self.TX_ADDRESS)
-
-    # Display the content of NRF24L01 device registers.
-    self.radio.show_registers()
-
-    count = 0
     print(f'Send to {self.TX_ADDRESS}')
-    try:
-        while True:
 
-            # Emulate that we read temperature and humidity from a sensor, for example
-            # a DHT22 sensor.  Add a little random variation so we can see that values
-            # sent/received fluctuate a bit.
-            temperature = normalvariate(23.0, 0.5)
-            humidity    = normalvariate(62.0, 0.5)
-            print(f'Sensor values: temperature={temperature}, humidity={humidity}')
+    # Show configuration registers of the radio
+    if os.getenv("DEBUG"):
+      self.radio.show_registers()
 
-            # Pack temperature and humidity into a byte buffer (payload) using a protocol 
-            # signature of 0x01 so that the receiver knows that the bytes we are sending 
-            # are a temperature and a humidity (see "simple-receiver.py").
-            payload = struct.pack("<Bff", 0x01, temperature, humidity)
 
-            # Send the payload to the address specified above.
-            self.radio.reset_packages_lost()
-            self.radio.send(payload)
-            try:
-                self.radio.wait_until_sent()
-                
-            except TimeoutError:
-                print("Timeout waiting for transmission to complete.")
-                time.sleep(10)
-                continue
-            
-            if self.radio.get_packages_lost() == 0:
-                print(f"Success: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
-            else:
-                print(f"Error: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+    # ==========================
+    # Monitor the Tx queue
+    # ==========================
+    while (True):
+      if len(self.TRANSMIT_QUEUE) > 0:
+        try:
+           self.send(self.TRANSMIT_QUEUE.pop(0))
+        # TODO: How to handle error case (log to file?)
+        except Exception as e:
+          print("[ERROR] Exception thrown in Tx loop") # TODO: Make error verbose
+          print(e)
 
-            # Wait 10 seconds before sending the next reading.
-            time.sleep(10)
+        # Wait before next packet Tx
+        time.sleep(0.1)
+        
+     
 
-    except:
-        print("[ERROR] Exception thrown in Tx loop") # TODO: Make error verbose
-        self.radio.power_down()
-        self.gpio.stop()
+
+  # ==================================================
+  # send - Loop to watch for new packets to transmit
+  # ==================================================
+  def send(self, data):
+    
+    # Send the payload to the address specified above.
+    self.radio.reset_packages_lost()
+    self.radio.send(data)
+
+    self.radio.wait_until_sent()
+    
+    if self.radio.get_packages_lost() == 0:
+        print(f"Tx Success: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+    else:
+        print(f"Tx Error: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+
 

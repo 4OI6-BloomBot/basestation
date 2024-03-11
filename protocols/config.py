@@ -8,45 +8,47 @@
 from .base import BaseProtocol, PROTOCOLS
 
 
-class Location(BaseProtocol):
+class Config(BaseProtocol):
 
   # =============================================
   # Declare the data structure for the protocol
   # =============================================
   data = {
-    "latitude" : {
-      "type"      : float,
-      "precision" : 6
+    "id" : {
+      "type": int
     },
-    "longitude" : {
+    "temp_thresh" : {
       "type"      : float,
       "precision" : 6
     }
   }
 
-  endpoint = "location"
-  name     = "Location"
+  endpoint = "config"
+  name     = "Config"
 
 
   # =============================================
   # Constructor
   # ============================================= 
   def __init__(self):
-    super().__init__(2)
+    super().__init__(1)
 
 
   # =============================================
-  # Unpack the individual values into the JSON 
-  # object. Check that the value has been set
-  # before parsing
+  # Won't be used for the Config protocol
   # =============================================
   def packJSONData(self, json):
-    for key in self.data:
-      if ("value" not in self.data[key]):
-        raise ValueError("Value not provided for {name}".format(name = key))
-      else:
-        json[key] = self.data[key]["value"]
+    pass
 
+
+  def parseJSON(self, json):
+    for key in json:
+      if (key in self.data):
+        self.setValue(json[key], key)
+
+      # TODO: Should log params that are not in the param
+      # raise ValueError("Parameter {p} does not exist in the Config protocol.".format(p = key))
+        
 
   # ==================================================
   # Returns a list containing all values of the packet
@@ -64,7 +66,6 @@ class Location(BaseProtocol):
 
 
 # =============================================
-# Add Location to protocol type dictionary
-# TODO: Cleaner way to do this?
+# Add Config to protocol type dictionary
 # =============================================
-PROTOCOLS[2] = Location
+PROTOCOLS[1] = Config

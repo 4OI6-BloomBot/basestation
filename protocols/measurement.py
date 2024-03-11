@@ -52,3 +52,14 @@ class Measurement(BaseProtocol, metaclass = ABCMeta):
     json["sensor"] = {
       "id" : self.sensor_ID
     }
+
+  # ==================================================
+  # Returns a list containing all values of the packet
+  # ==================================================
+  def getValuesList(self):
+    if ("value" not in self.data):
+      raise ValueError("Value not provided for {name}".format(name = self.name))
+    else:
+      values = [self.data["value"]["value"]]
+
+    return values

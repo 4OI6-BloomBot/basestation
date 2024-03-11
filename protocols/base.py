@@ -96,8 +96,8 @@ class BaseProtocol(metaclass = ABCMeta):
     if (self.timestamp == 0):
       json["datetime"] = datetime.now()
     else:
-      json["datetime"] = datetime(self.timestamp)
-
+      json["datetime"] = datetime.utcfromtimestamp(self.timestamp)
+  
     # Convert the time to a string that can be accepted by the server.
     json["datetime"] = json["datetime"].strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -121,16 +121,31 @@ class BaseProtocol(metaclass = ABCMeta):
 
 
   # ==================================================
-  # Construct the string for the unpack function
+  # Method implemented by children to return a list
+  # containing all values
   # ==================================================
-  def getUnpackStr(self):
+  @abstractmethod
+  def getValuesList(self):
+    pass
+
+
+  # ==================================================
+  # Construct the string for the byte pack function
+  # ==================================================
+  def getBytePackStr(self, isRx = True):
     # < - Little endian
     # B - Unsigned char (ID)
     # B - Unsigned char (hwID)
-    # B - Unsigned char (locationID)
-    # L - Unsigned long (epoch)
-    unpack_str = "<BBBL"
+    # B - Unsigned char (locationID) (Rx only)
+    # L - Unsigned long (epoch)      (Rx only)
+    unpack_str = "<BB"
+    
+    # Add the additional data types to the Rx unpack str
+    if (isRx): 
+      unpack_str += "BL"
 
+
+    # Add each of the values to the string
     for key in self.data:
       unpack_str += getTypeStr(self.data[key]["type"])
 
@@ -161,3 +176,4 @@ class BaseProtocol(metaclass = ABCMeta):
 # ==================================================
 def getTypeStr(t):
   if (t == float): return "f"
+  if (t == int):   return "i"

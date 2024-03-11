@@ -6,8 +6,9 @@
 # ==============
 # Imports
 # ==============
-import requests, os
-from   .location_handler import LocationHandler
+import requests, os, time
+from   .location_handler  import LocationHandler
+from   protocols.config import Config
 
 class ServerMiddleware():
 
@@ -17,24 +18,55 @@ class ServerMiddleware():
   # Constructor - Requires a shared queue that is 
   #               populated with parsed packets
   # ==================================================
-  def __init__(self, server_queue):
-    self.SERVER_QUEUE = server_queue
-    self.location     = LocationHandler()
+  def __init__(self, server_tx_queue, server_rx_queue):
+    self.SERVER_TX_QUEUE = server_tx_queue
+    self.SERVER_RX_QUEUE = server_rx_queue
+    self.location        = LocationHandler()
 
 
   # ==================================================
-  # monitorServerQueue - Monitor the queue for new 
-  #                      entries and parse them.
+  # monitorTxQueue - Monitor the Tx queue for new 
+  #                  entries and parse them.
   # ==================================================
-  def monitorServerQueue(self):
+  def monitorTxQueue(self):
     while(True):
-      if len(self.SERVER_QUEUE) > 0:
-        pkt      = self.SERVER_QUEUE.pop(0)
+      if len(self.SERVER_TX_QUEUE) > 0:
+        pkt      = self.SERVER_TX_QUEUE.pop(0)
         response = self.sendData(pkt)
 
         # Update the location handler if it was a location pkt
         if (LocationHandler.isLocationPkt(pkt)):
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
+
+
+  # =======================================================
+  # pollConfig - Poll the server for configurations.
+  #              TODO: This is a bit messy right now, 
+  #                    Shouldn't keep sending configs
+  #                    Relying on the location map works
+  #                    but is not ideal.
+  # =======================================================
+  def pollConfig(self):
+    while(True):
+      for hwID in self.location.map:
+        self.getConfig(hwID)
+      
+      # Wait before polling again
+      time.sleep(30)
+
+
+  # ======================================================
+  # getAPIURL - Accessor method to make sure that the API
+  #             URL is formatted correctly.
+  # ======================================================
+  def getAPIURL(self):
+    url = self.API_ADDR
+    
+    # Need to ensure that there is a trailing / in the URL
+    if (url[len(url) - 1] != '/'):
+      url += "/"
+
+    return url
 
 
   # ==================================================
@@ -51,7 +83,7 @@ class ServerMiddleware():
 
     # Construct POST data
     headers = {'Content-Type': 'application/json'}
-    url     = ServerMiddleware.API_ADDR + pkt.endpoint
+    url     = self.getAPIURL() + pkt.endpoint
     
     # Need to ensure that there is a trailing / in the URL
     if (url[len(url) - 1] != '/'):
@@ -62,3 +94,29 @@ class ServerMiddleware():
     
 
     return response
+  
+
+  # =====================================================
+  # getConfig - Queries the server for the device config
+  # =====================================================
+  def getConfig(self, hwID):
+
+    # Create the endpoint URL
+    url = self.getAPIURL() + "config/" + str(hwID)
+
+    # Query the server
+    response = requests.get(url)
+    data     = response.json()
+
+    # If there is an error response
+    # TODO: Handle and make verbose.
+    if (response.status_code != 200):
+      print("ERROR")
+      return
+
+    # Create a new Config packet and add it to the queue
+    config      = Config()
+    config.hwID = hwID
+    config.parseJSON(data)
+
+    self.SERVER_RX_QUEUE.append(config)

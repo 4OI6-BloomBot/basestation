@@ -6,33 +6,70 @@
 # ==============
 # Imports
 # ==============
-import struct
+import struct, threading
 from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 
 
 class PacketParser:
 
   # ================================================== 
-  # Constructor - Requires a shared queue that is 
-  #               populated with received packets.
+  # Constructor - Requires access to the radio and 
+  #               server shared queues to convert
+  #               between formats.
   # ==================================================
-  def __init__(self, packet_queue, data_queue):
-    self.PACKET_QUEUE = packet_queue
-    self.DATA_QUEUE   = data_queue
+  def __init__(self, radio_rx_queue, radio_tx_queue, server_rx_queue, server_tx_queue):
+    # From Radio to Server
+    self.RADIO_RX_QUEUE  = radio_rx_queue
+    self.SERVER_TX_QUEUE = server_tx_queue
+
+    # From Server to Radio
+    self.SERVER_RX_QUEUE = server_rx_queue
+    self.RADIO_TX_QUEUE  = radio_tx_queue
+
+
+
+  # ======================================================
+  # startQueueMonitoring - Starts threads for each of the 
+  #                        queues.
+  # ======================================================
+  def startQueueMonitoring(self):
+    server_rx = threading.Thread(target = self.monitorServerRxQueue)
+    radio_rx  = threading.Thread(target = self.monitorRadioRxQueue)
+
+    server_rx.start()
+    radio_rx.start()
 
 
   # ==================================================
-  # monitorQueue - Monitor the queue for new entries
-  #                and parse them.
+  # monitorServerRxQueue - Monitor the server Rx queue 
+  #                        for new entries and parse
+  #                        them.
   # ==================================================
-  def monitorRxQueue(self):
+  def monitorServerRxQueue(self):
     while (True):
-      if len(self.PACKET_QUEUE) > 0:
-        result = self.parsePacket(self.PACKET_QUEUE.pop(0))
+      if len(self.SERVER_RX_QUEUE) > 0:
+        result = self.packPacket(self.SERVER_RX_QUEUE.pop(0))
 
         # Only process the result if it succeed
         if result is not None:
-          self.DATA_QUEUE.append(result)
+          self.RADIO_TX_QUEUE.append(result)
+
+
+
+  # ==================================================
+  # monitorRadioRxQueue - Monitor the radio Rx queue  
+  #                       for new entries and parse
+  #                       them.
+  # ==================================================
+  def monitorRadioRxQueue(self):
+    while (True):
+      if len(self.RADIO_RX_QUEUE) > 0:
+        result = self.parsePacket(self.RADIO_RX_QUEUE.pop(0))
+
+        # Only process the result if it succeed
+        if result is not None:
+          self.SERVER_TX_QUEUE.append(result)
+
 
 
   # ==================================================
@@ -51,7 +88,7 @@ class PacketParser:
     protocol = PROTOCOLS[protocol_id]()
 
     # Pull the values from the sent data and check if the data is valid.
-    values   = struct.unpack(protocol.getUnpackStr(), packet)
+    values   = struct.unpack(protocol.getBytePackStr(), packet)
 
     # Check if the number of values matches what is expected for the datatype
     value_cnt, expected_cnt = len(protocol.data.keys()), len(values) - NUM_SPECIAL_KEYS
@@ -73,5 +110,29 @@ class PacketParser:
 
 
     return protocol
-    
 
+
+
+  # ==================================================
+  # packPacket - Create a bytestring with the given
+  #              packet in prep for transmission.
+  # ==================================================
+  def packPacket(self, packet):
+    data = []
+    
+    # Check that the required data exists
+    if (packet.hwID is None):
+      raise ValueError("No device hardware ID is set.")
+    
+    if (packet.id is None):
+      raise ValueError("No protocol ID is set")
+
+    # Add the protocol type (ID) and HW ID 
+    data.append(packet.id)
+    data.append(packet.hwID)
+    
+    # Add the remaining data to the packet
+    data += packet.getValuesList()
+    
+    # Pack the data
+    return struct.pack(packet.getBytePackStr(isRx = False), *data)
