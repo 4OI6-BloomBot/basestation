@@ -5,10 +5,8 @@
 # ================================================
 # Imports
 # ================================================
-import struct
 import sys, time, os
 import pigpio
-from   random import normalvariate
 from   nrf24  import *
 
 class Radio:
