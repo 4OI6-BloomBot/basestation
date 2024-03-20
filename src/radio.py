@@ -129,7 +129,7 @@ class Radio:
     self.radio.wait_until_sent()
     
     if self.radio.get_packages_lost() == 0:
-        msg.success(f"Packet transmitted succesfully! (retries = {self.radio.get_retries()})")
+        msg.good(f"Packet transmitted succesfully! (retries = {self.radio.get_retries()})")
     else:
         msg.error(f"Error in packet transmission! (lost = {self.radio.get_packages_lost()}, retries = {self.radio.get_retries()})")
 
