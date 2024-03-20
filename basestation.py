@@ -7,6 +7,7 @@
 # =======================
 import threading, os
 from   dotenv import load_dotenv
+from   wasabi import msg
 
 # ==================================================
 # Load the environment variables from the .env file
@@ -38,6 +39,9 @@ radio_rx_queue  = []
 radio_tx_queue  = []
 server_rx_queue = [] 
 server_tx_queue = []
+
+# Reference to Wasabi for logging
+msg.divider("BloomBot Basestation")
 
 # Create the classes and pass them their respective queues
 if ("NO_RADIO" not in os.environ):

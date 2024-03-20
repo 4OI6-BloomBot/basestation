@@ -8,6 +8,7 @@
 import sys, time, os
 import pigpio
 from   nrf24  import *
+from   wasabi import msg
 
 class Radio:
 
@@ -28,7 +29,7 @@ class Radio:
     self.gpio = pigpio.pi("localhost", self.GPIO_PORT)
     
     if not self.gpio.connected:
-      print("[ERROR] Could not connect to the GPIO daemon. Please make sure it is running.")
+      msg.error("Could not connect to the GPIO daemon. Please make sure that it is running.")
       sys.exit()
 
 
@@ -58,7 +59,7 @@ class Radio:
     self.radio.show_registers()
 
     try:
-      print(f'Receive from {self.RX_ADDRESS}')
+      msg.info(f'Rx address: {self.RX_ADDRESS}')
 
       while True:
 
@@ -75,7 +76,7 @@ class Radio:
           time.sleep(0.1)
 
     except:
-      print("[ERROR] Exception thrown in Rx loop") # TODO: Make error verbose
+      msg.error("Exception thrown in Rx loop. Shutting down radio.") # TODO: Make error verbose
       self.radio.power_down()
       self.gpio.stop()
 
@@ -91,7 +92,7 @@ class Radio:
     # Initialize Tx
     # ===========================
     self.radio.open_writing_pipe(self.TX_ADDRESS)
-    print(f'Send to {self.TX_ADDRESS}')
+    msg.info(f'Tx address: {self.TX_ADDRESS}')
 
     # Show configuration registers of the radio
     if os.getenv("DEBUG"):
@@ -107,7 +108,7 @@ class Radio:
            self.send(self.TRANSMIT_QUEUE.pop(0))
         # TODO: How to handle error case (log to file?)
         except Exception as e:
-          print("[ERROR] Exception thrown in Tx loop") # TODO: Make error verbose
+          msg.error("Exception thrown in Tx loop") # TODO: Make error verbose
           print(e)
 
         # Wait before next packet Tx
@@ -128,8 +129,8 @@ class Radio:
     self.radio.wait_until_sent()
     
     if self.radio.get_packages_lost() == 0:
-        print(f"Tx Success: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+        msg.success(f"Packet transmitted succesfully! (retries = {self.radio.get_retries()})")
     else:
-        print(f"Tx Error: lost={self.radio.get_packages_lost()}, retries={self.radio.get_retries()}")
+        msg.error(f"Error in packet transmission! (lost = {self.radio.get_packages_lost()}, retries = {self.radio.get_retries()})")
 
 
