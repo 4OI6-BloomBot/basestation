@@ -47,7 +47,7 @@ class ServerMiddleware():
         if (not response.ok):
           msg.fail(f"Received response code {response.status_code} from the server when sending {pkt.name} packet from BloomBot {pkt.hwID}!")
         else:
-          msg.good(f"Successfully sent {pkt.name} from BloomBot {pkt.hwID}")
+          msg.good(f"Successfully sent {pkt.name} from BloomBot {pkt.hwID} to server.")
 
 
   # =======================================================
@@ -123,6 +123,8 @@ class ServerMiddleware():
     if (not response.ok):
       msg.fail("Received response code {} from the server when polling for configurations!".format(response.status_code))
       return
+    
+    msg.info(f"Received config for BloomBot {hwID} from the server.")
 
     # Create a new Config packet and add it to the queue
     config      = Config()
