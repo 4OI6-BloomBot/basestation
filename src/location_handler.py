@@ -9,6 +9,8 @@
 # Imports
 # ================================
 from protocols.location import Location
+from wasabi             import msg
+
 
 class LocationHandler():
 
@@ -56,14 +58,15 @@ class LocationHandler():
   #               and adds the ID of the object to the map.
   # ========================================================
   def addLocation(self, hwID, locationID, response): 
-    print(response.status_code)
-    print(response.content)   
+
     if (response.status_code == 201):
       response_data = response.json()
 
       # Check if the device has been registered.
       if (hwID not in self.map):
         self.map[hwID] = {}
+        msg.warn(f"First time seeing BloomBot {hwID}, adding to local record.")
+
 
       self.map[hwID][locationID] = response_data["id"]
 

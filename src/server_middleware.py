@@ -8,7 +8,8 @@
 # ==============
 import requests, os, time
 from   .location_handler  import LocationHandler
-from   protocols.config import Config
+from   protocols.config   import Config
+from   wasabi             import msg
 
 class ServerMiddleware():
 
@@ -22,6 +23,9 @@ class ServerMiddleware():
     self.SERVER_TX_QUEUE = server_tx_queue
     self.SERVER_RX_QUEUE = server_rx_queue
     self.location        = LocationHandler()
+
+    # Display information to the console at startup
+    msg.info("BloomBot server API endpoint: " + self.getAPIURL())
 
 
   # ==================================================
@@ -37,6 +41,13 @@ class ServerMiddleware():
         # Update the location handler if it was a location pkt
         if (LocationHandler.isLocationPkt(pkt)):
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
+          
+
+        # Print the results
+        if (not response.ok):
+          msg.fail(f"Received response code {response.status_code} from the server when sending {pkt.name} packet from BloomBot {pkt.hwID}!")
+        else:
+          msg.good(f"Successfully sent {pkt.name} from BloomBot {pkt.hwID} to server.")
 
 
   # =======================================================
@@ -109,10 +120,11 @@ class ServerMiddleware():
     data     = response.json()
 
     # If there is an error response
-    # TODO: Handle and make verbose.
-    if (response.status_code != 200):
-      print("ERROR")
+    if (not response.ok):
+      msg.fail("Received response code {} from the server when polling for configurations!".format(response.status_code))
       return
+    
+    msg.info(f"Received config for BloomBot {hwID} from the server.")
 
     # Create a new Config packet and add it to the queue
     config      = Config()

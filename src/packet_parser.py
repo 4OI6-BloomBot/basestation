@@ -8,6 +8,7 @@
 # ==============
 import struct, threading
 from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
+from   wasabi         import msg
 
 
 class PacketParser:
@@ -96,7 +97,7 @@ class PacketParser:
       raise ValueError("Mismatch between the number of values in the protocol (%d) and packet (%d)" % (value_cnt, expected_cnt))
 
 
-    print("[INFO] Received packet: Protocol ID: {p_id} | hwID: {hwID}".format(p_id = values[0], hwID = values[1]))
+    msg.info(f"Received {protocol.name} packet from BloomBot {values[1]}")
 
     # Store the parsed values back into the protocol struct
     # Store the special values

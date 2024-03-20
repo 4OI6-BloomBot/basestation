@@ -17,7 +17,19 @@ class Config(BaseProtocol):
     "id" : {
       "type": int
     },
-    "temp_thresh" : {
+    "tempThresh" : {
+      "type"      : float,
+      "precision" : 6
+    },
+    "deltaTurbThresh" : {
+      "type"      : float,
+      "precision" : 6
+    },
+    "deltaTempThresh" : {
+      "type"      : float,
+      "precision" : 6
+    },
+    "fluoroThresh" : {
       "type"      : float,
       "precision" : 6
     }
