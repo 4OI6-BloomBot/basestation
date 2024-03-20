@@ -42,9 +42,9 @@ class ServerMiddleware():
         if (LocationHandler.isLocationPkt(pkt)):
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
           
-          
+
         # Print the results
-        if (response.ok):
+        if (not response.ok):
           msg.fail(f"Received response code {response.status_code} from the server when sending {pkt.name} packet from BloomBot {pkt.hwID}!")
         else:
           msg.good(f"Successfully sent {pkt.name} from BloomBot {pkt.hwID}")
