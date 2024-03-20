@@ -9,6 +9,8 @@
 # Imports
 # ================================
 from protocols.location import Location
+from wasabi             import msg
+
 
 class LocationHandler():
 
@@ -63,6 +65,8 @@ class LocationHandler():
       # Check if the device has been registered.
       if (hwID not in self.map):
         self.map[hwID] = {}
+        msg.info(f"First time seeing BloomBot {hwID}, adding to local record.")
+
 
       self.map[hwID][locationID] = response_data["id"]
 
