@@ -29,7 +29,7 @@ class Radio:
     self.gpio = pigpio.pi("localhost", self.GPIO_PORT)
     
     if not self.gpio.connected:
-      msg.error("Could not connect to the GPIO daemon. Please make sure that it is running.")
+      msg.fail("Could not connect to the GPIO daemon. Please make sure that it is running.")
       sys.exit()
 
 
@@ -75,8 +75,9 @@ class Radio:
           # Sleep 100 ms.
           time.sleep(0.1)
 
-    except:
-      msg.error("Exception thrown in Rx loop. Shutting down radio.") # TODO: Make error verbose
+    except Exception as e:
+      msg.fail("Exception thrown in Rx loop. Shutting down radio.") # TODO: Make error verbose
+      print(e)
       self.radio.power_down()
       self.gpio.stop()
 
@@ -106,9 +107,10 @@ class Radio:
       if len(self.TRANSMIT_QUEUE) > 0:
         try:
            self.send(self.TRANSMIT_QUEUE.pop(0))
-        # TODO: How to handle error case (log to file?)
+        except TimeoutError:
+          msg.fail("Timed-out waiting for packet to transmit.")
         except Exception as e:
-          msg.error("Exception thrown in Tx loop") # TODO: Make error verbose
+          msg.fail("Exception thrown in Tx loop")
           print(e)
 
         # Wait before next packet Tx
@@ -131,6 +133,6 @@ class Radio:
     if self.radio.get_packages_lost() == 0:
         msg.good(f"Packet transmitted succesfully! (retries = {self.radio.get_retries()})")
     else:
-        msg.error(f"Error in packet transmission! (lost = {self.radio.get_packages_lost()}, retries = {self.radio.get_retries()})")
+        msg.fail(f"Error in packet transmission! (lost = {self.radio.get_packages_lost()}, retries = {self.radio.get_retries()})")
 
 
