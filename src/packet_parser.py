@@ -97,7 +97,7 @@ class PacketParser:
       raise ValueError("Mismatch between the number of values in the protocol (%d) and packet (%d)" % (value_cnt, expected_cnt))
 
 
-    msg.good("Received packet from BloomBot: Protocol ID: {p_id} | hwID: {hwID}".format(p_id = values[0], hwID = values[1]))
+    msg.info("Received packet from BloomBot: Packet Type: {p_name} | Protocol ID: {p_id} | hwID: {hwID}".format(p_name = protocol.name, p_id = values[0], hwID = values[1]))
 
     # Store the parsed values back into the protocol struct
     # Store the special values

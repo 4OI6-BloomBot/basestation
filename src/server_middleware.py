@@ -41,6 +41,13 @@ class ServerMiddleware():
         # Update the location handler if it was a location pkt
         if (LocationHandler.isLocationPkt(pkt)):
           self.location.addLocation(pkt.hwID, pkt.locationID, response)
+          msg.info(f"First time seeing BloomBot {pkt.hwID}, adding to local record.")
+
+        # Print the results
+        if (response.status_code != 200):
+          msg.fail(f"Received response code {response.status_code} from the server when sending {pkt.name} packet from BloomBot {pkt.hwID}!")
+        else:
+          msg.good(f"Successfully sent {pkt.name} from BloomBot {pkt.hwID}")
 
 
   # =======================================================

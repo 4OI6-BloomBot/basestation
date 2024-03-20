@@ -56,8 +56,7 @@ class LocationHandler():
   #               and adds the ID of the object to the map.
   # ========================================================
   def addLocation(self, hwID, locationID, response): 
-    print(response.status_code)
-    print(response.content)   
+
     if (response.status_code == 201):
       response_data = response.json()
 
