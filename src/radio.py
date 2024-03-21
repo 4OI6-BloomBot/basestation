@@ -12,6 +12,8 @@ from   wasabi import msg
 
 class Radio:
 
+  DEBUG = "DEBUG" in os.environ
+
   # ================================================
   # Constructor
   # ================================================
@@ -55,8 +57,8 @@ class Radio:
     # Open connection
     self.radio.open_reading_pipe(RF24_RX_ADDR.P1, self.RX_ADDRESS)
 
-    # Temp/debug
-    self.radio.show_registers()
+    if (Radio.DEBUG):
+      self.radio.show_registers()
 
     try:
       msg.info(f'Rx address: {self.RX_ADDRESS}')
