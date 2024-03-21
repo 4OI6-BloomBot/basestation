@@ -22,9 +22,11 @@ from src.packet_parser     import PacketParser
 from src.server_middleware import ServerMiddleware
 
 # Import the individual protocols
-from protocols.location    import Location
-from protocols.temperature import Temperature
-from protocols.config      import Config
+from protocols.location     import Location
+from protocols.temperature  import Temperature
+from protocols.turbidity    import Turbidity
+from protocols.fluorescence import Fluorescence
+from protocols.config       import Config
 
 
 # ========================================================
