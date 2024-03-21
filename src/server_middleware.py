@@ -101,8 +101,10 @@ class ServerMiddleware():
       url += "/"
 
     # Send POST request
-    response = requests.post(url, json = json, headers = headers)
-    
+    try:
+      response = requests.post(url, json = json, headers = headers)
+    except Exception as e:
+      msg.fail(str(e))
 
     return response
   
@@ -116,8 +118,12 @@ class ServerMiddleware():
     url = self.getAPIURL() + "config/" + str(hwID)
 
     # Query the server
-    response = requests.get(url)
-    data     = response.json()
+    try:
+      response = requests.get(url)
+      data     = response.json()
+    except Exception as e:
+      msg.fail(str(e))
+      return
 
     # If there is an error response
     if (not response.ok):
