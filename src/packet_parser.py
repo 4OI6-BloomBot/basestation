@@ -65,7 +65,11 @@ class PacketParser:
   def monitorRadioRxQueue(self):
     while (True):
       if len(self.RADIO_RX_QUEUE) > 0:
-        result = self.parsePacket(self.RADIO_RX_QUEUE.pop(0))
+        try:
+          result = self.parsePacket(self.RADIO_RX_QUEUE.pop(0))
+        except ValueError as e:
+          msg.fail(str(e))
+          continue
 
         # Only process the result if it succeed
         if result is not None:
@@ -82,7 +86,7 @@ class PacketParser:
     # Find the protocol in the map
     protocol_id = packet[0]
     if (protocol_id not in PROTOCOLS):
-      raise ValueError("[ERROR] Could not find protocol with id={id}".format(id = protocol_id))
+      raise ValueError("Could not find protocol with id={id}".format(id = protocol_id))
       
 
     # Create a new instance of the protocol
