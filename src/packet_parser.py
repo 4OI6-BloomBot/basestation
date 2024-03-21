@@ -49,7 +49,11 @@ class PacketParser:
   def monitorServerRxQueue(self):
     while (True):
       if len(self.SERVER_RX_QUEUE) > 0:
-        result = self.packPacket(self.SERVER_RX_QUEUE.pop(0))
+        try:
+          result = self.packPacket(self.SERVER_RX_QUEUE.pop(0))
+        except ValueError as e:
+          msg.fail(str(e))
+          continue
 
         # Only process the result if it succeed
         if result is not None:
