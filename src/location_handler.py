@@ -74,7 +74,8 @@ class LocationHandler():
     if (response.status_code == 201):
       response_data = response.json()
 
-      if (hwID not in HWID_WHITELIST):
+      # Skip if device is not in whitelist
+      if (LocationHandler.ENABLE_WHITELIST and hwID not in LocationHandler.HWID_WHITELIST):
         return
 
       # Check if the device has been registered.
