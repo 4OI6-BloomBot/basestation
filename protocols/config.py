@@ -21,11 +21,15 @@ class Config(BaseProtocol):
       "type"      : float,
       "precision" : 6
     },
-    "deltaTurbThresh" : {
+    "deltaTempThresh" : {
       "type"      : float,
       "precision" : 6
     },
-    "deltaTempThresh" : {
+    "turbThresh" : {
+      "type"      : float,
+      "precision" : 6
+    },
+    "deltaTurbThresh" : {
       "type"      : float,
       "precision" : 6
     },
