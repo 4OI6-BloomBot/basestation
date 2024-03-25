@@ -110,6 +110,8 @@ class PacketParser:
     if (value_cnt != expected_cnt):
       raise ValueError("Mismatch between the number of values in the protocol (%d) and packet (%d)" % (value_cnt, expected_cnt))
 
+    if (values[1] != 0):
+      return
 
     msg.info(f"Received {protocol.name} packet from BloomBot {values[1]}")
 
@@ -125,7 +127,7 @@ class PacketParser:
 
 
     if (protocol_id == 3):
-      protocol.setValue(4, float(decimal.Decimal(random.randrange(2100, 2250))/100))
+      protocol.setValue(float(decimal.Decimal(random.randrange(2100, 2250))/100), "value")
 
     return protocol
 
