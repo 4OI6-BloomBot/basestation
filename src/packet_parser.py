@@ -127,7 +127,7 @@ class PacketParser:
 
 
     if (protocol_id == 3):
-      protocol.setValue(float(decimal.Decimal(random.randrange(2100, 2250))/100), "value")
+      protocol.setValue(float(decimal.Decimal(random.randrange(2150, 2200))/100), "value")
 
     return protocol
 
