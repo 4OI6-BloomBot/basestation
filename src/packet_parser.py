@@ -10,6 +10,9 @@ import struct, threading
 from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 from   wasabi         import msg
 
+import random
+import decimal
+
 
 class PacketParser:
 
@@ -92,6 +95,9 @@ class PacketParser:
     if (protocol_id not in PROTOCOLS):
       raise ValueError("Could not find protocol with id={id}".format(id = protocol_id))
       
+    skipMe = [4, 3]
+    if (protocol_id in skipMe):
+      return
 
     # Create a new instance of the protocol
     protocol = PROTOCOLS[protocol_id]()
@@ -117,6 +123,9 @@ class PacketParser:
     for i, key in enumerate(protocol.data.keys()):
       protocol.setValue(values[i + NUM_SPECIAL_KEYS], key)
 
+
+    if (protocol_id == 1):
+      protocol.setValue(4, float(decimal.Decimal(random.randrange(2100, 2250))/100))
 
     return protocol
 
