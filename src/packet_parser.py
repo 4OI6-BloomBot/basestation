@@ -95,9 +95,9 @@ class PacketParser:
     if (protocol_id not in PROTOCOLS):
       raise ValueError("Could not find protocol with id={id}".format(id = protocol_id))
       
-    skipMe = [4, 3]
+    skipMe = [4, 5]
     if (protocol_id in skipMe):
-      return
+      return None
 
     # Create a new instance of the protocol
     protocol = PROTOCOLS[protocol_id]()
@@ -124,7 +124,7 @@ class PacketParser:
       protocol.setValue(values[i + NUM_SPECIAL_KEYS], key)
 
 
-    if (protocol_id == 1):
+    if (protocol_id == 3):
       protocol.setValue(4, float(decimal.Decimal(random.randrange(2100, 2250))/100))
 
     return protocol
