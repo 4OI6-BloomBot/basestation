@@ -36,6 +36,13 @@ class Config(BaseProtocol):
     "fluoroThresh" : {
       "type"      : float,
       "precision" : 6
+    },
+    "deltaFluoroThresh" : {
+      "type"      : float,
+      "precision" : 6
+    },
+    "skipDetection" : {
+      "type"      : bool,
     }
   }
 

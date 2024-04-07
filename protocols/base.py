@@ -177,3 +177,4 @@ class BaseProtocol(metaclass = ABCMeta):
 def getTypeStr(t):
   if (t == float): return "f"
   if (t == int):   return "i"
+  if (t == bool):  return '?'
