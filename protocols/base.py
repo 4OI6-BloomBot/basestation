@@ -5,7 +5,7 @@
 # ================================
 # Imports
 # ================================
-import math
+import math, os
 from   abc      import ABCMeta, abstractmethod
 from   datetime import datetime
 
@@ -93,7 +93,7 @@ class BaseProtocol(metaclass = ABCMeta):
 
     # TODO: Not sure if this is the best way to handle no time sent from
     #       device.
-    if (self.timestamp == 0):
+    if (os.getenv("ENABLE_TIME_OVR") or self.timestamp == 0):
       json["datetime"] = datetime.now()
     else:
       json["datetime"] = datetime.utcfromtimestamp(self.timestamp)
