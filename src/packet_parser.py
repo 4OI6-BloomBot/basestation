@@ -6,12 +6,22 @@
 # ==============
 # Imports
 # ==============
-import struct, threading
+import struct, threading, os, json
 from   protocols.base import PROTOCOLS, NUM_SPECIAL_KEYS
 from   wasabi         import msg
 
 
 class PacketParser:
+
+  # =============================================
+  # Whitelist for testing
+  # =============================================
+  ENABLE_WHITELIST = "ENABLE_HWID_WHITELIST" in os.environ
+  
+  # Only parse the whitelist if it exists
+  if ("HWID_WHITELIST" in os.environ):
+    HWID_WHITELIST   = json.loads(os.environ['HWID_WHITELIST'])
+
 
   # ================================================== 
   # Constructor - Requires access to the radio and 
@@ -112,6 +122,10 @@ class PacketParser:
     protocol.hwID       = values[1]
     protocol.locationID = values[2]
     protocol.timestamp  = values[3]
+
+    # Filter out packets if not in whitelist
+    if (PacketParser.ENABLE_WHITELIST and protocol.hwID not in PacketParser.HWID_WHITELIST):
+      return None
 
     # Store each of the data values
     for i, key in enumerate(protocol.data.keys()):

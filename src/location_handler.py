@@ -16,16 +16,6 @@ from wasabi             import msg
 
 class LocationHandler():
 
-  # =============================================
-  # Whitelist for testing
-  # =============================================
-  ENABLE_WHITELIST = "ENABLE_HWID_WHITELIST" in os.environ
-  
-  # Only parse the whitelist if it exists
-  if ("HWID_WHITELIST" in os.environ):
-    HWID_WHITELIST   = json.loads(os.environ['HWID_WHITELIST'])
-
-
   # ========================================================
   # Constructor
   # ========================================================
@@ -73,10 +63,6 @@ class LocationHandler():
 
     if (response.status_code == 201):
       response_data = response.json()
-
-      # Skip if device is not in whitelist
-      if (LocationHandler.ENABLE_WHITELIST and hwID not in LocationHandler.HWID_WHITELIST):
-        return
 
       # Check if the device has been registered.
       if (hwID not in self.map):
