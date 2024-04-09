@@ -27,6 +27,7 @@ from protocols.temperature  import Temperature
 from protocols.turbidity    import Turbidity
 from protocols.fluorescence import Fluorescence
 from protocols.config       import Config
+from protocols.deposit      import Deposit
 
 
 # ========================================================
